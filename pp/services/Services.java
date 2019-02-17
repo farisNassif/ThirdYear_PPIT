@@ -1,34 +1,14 @@
 package pp.services;
 
-import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
-
 public class Services {
 
-	ObjectOutputStream out;
-	ObjectInputStream in;
-	
-	protected void sendMessage(String msg)
-	{
-		try{
-			out.writeObject(msg);
-			out.flush();
-			System.out.println("client>" + msg);
-		}
-		catch(IOException ioException){
-			ioException.printStackTrace();
-		}
+	public static String welcomeUser() {
+		return "\nWelcome to our Online Card Game Library\nPlease press 1 to Login OR 2 to Register";
 	}
-	
-	protected void readInAndPrint(String msg)
-	{
-		 try {
-			msg = (String)in.readObject();
-		} catch (ClassNotFoundException | IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} 
-		 System.out.println(msg);
+
+	public static String terminateConnection() {
+		return "Press X to Terminate your connection OR any other key to Continue";
+
 	}
+
 }
