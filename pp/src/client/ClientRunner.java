@@ -29,21 +29,46 @@ public class ClientRunner {
 			in = new ObjectInputStream(requestSocket.getInputStream());
 
 			do {
-				// Welcome, Press 1 for Login or 2 for Registration
-				readInAndPrintMessage();
-				sendMessageToServer();
+				// Welcome, Press 1 for Registration or 2 for Login
+				message = (String) in.readObject();
+				System.out.println(message);
+				message = input.next();
+				sendMessage(message);
 
-				// Result of previous input, Login/Register/Invalid
-				readInAndPrintMessage();
+				if (message.equals("1")) {
+					// You have chosen to Register
+					message = (String) in.readObject();
+					System.out.println(message);
 
+					// Dealing with Player Name
+					message = (String) in.readObject();
+					System.out.println(message);
+					// Needed two of these otherwise the program would just skip and send a blank
+					// line
+					message = input.nextLine();
+					message = input.nextLine();
+					sendMessage(message);
+
+					// Dealing with Player Password
+					message = (String) in.readObject();
+					System.out.println(message);
+					message = input.next();
+					sendMessage(message);
+					
+					message = (String) in.readObject();
+					System.out.println(message);
+				}
 				// Loop, X to exit or anything else to return
-				readInAndPrintMessage();
-				sendMessageToServer();
+				message = (String) in.readObject();
+				System.out.println(message);
+				message = input.next();
+				sendMessage(message);
 
 			} while (!message.equalsIgnoreCase("x"));
 
 			// Notifying client of connection termination
-			readInAndPrintMessage();
+			message = (String) in.readObject();
+			System.out.println(message);
 		}
 
 		catch (UnknownHostException unknownHost) {
@@ -80,14 +105,15 @@ public class ClientRunner {
 		ClientRunner client = new ClientRunner();
 		client.run();
 	}
-	
-	public void readInAndPrintMessage() throws ClassNotFoundException, IOException {
-		message = (String) in.readObject();
-		System.out.println(message);
-	}
-	
-	public void sendMessageToServer() {
-		message = input.next();
-		sendMessage(message);
-	}
+
+	/*
+	 * public void readInAndPrintMessage() throws ClassNotFoundException,
+	 * IOException { message = (String) in.readObject();
+	 * System.out.println(message); }
+	 */
+
+	/*
+	 * public void sendMessageToServer() { message = input.next();
+	 * sendMessage(message); }
+	 */
 }
