@@ -75,8 +75,8 @@ public class Server extends Thread {
 
 					writer.newLine();
 					// Writing their Player Name, Password & Client ID to server file
-					writer.write(("Player Name: " + playerName + " | Player Password: " + playerPassword
-							+ " | Client IP: " + clientSocket.getInetAddress().getHostName()));
+					writer.write((playerName + " " + playerPassword + " " + clientSocket.getInetAddress().getHostName()
+							+ " SHOULD BE local address: " + clientSocket.getLocalAddress().getHostAddress()));
 					sendMessage("Welcome " + playerName + ", Your account is now registered and you may Log in.");
 					writer.close();
 				}
