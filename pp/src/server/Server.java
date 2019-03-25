@@ -24,6 +24,9 @@ public class Server extends Thread {
 	// Used for registration/login
 	private String playerName;
 	private String playerPassword;
+	private int loggedIn;
+	private String playerLoginName;
+	private String playerLoginPassword;
 
 	Server(Socket s, int i) {
 		clientSocket = s;
@@ -79,8 +82,37 @@ public class Server extends Thread {
 							+ " SHOULD BE local address: " + clientSocket.getLocalAddress().getHostAddress()));
 					sendMessage("Welcome " + playerName + ", Your account is now registered and you may Log in.");
 					writer.close();
-				}
+				} else if (message.equalsIgnoreCase("2")) {
+					// Logged in = false until user verified/logged in correctly
+					loggedIn = 0;
+					// Reading the file for validation (Making sure email + id is unique)
+					Scanner scanner = new Scanner(new File("players.txt"));
 
+					sendMessage("You have chosen to Login");
+
+					sendMessage("Please enter your player name (Case Sensitive)");
+					playerLoginName = (String) in.readObject();
+
+					sendMessage("Please enter your password");
+					playerLoginPassword = (String) in.readObject();
+
+					while (scanner.hasNextLine()) {
+						String line = scanner.nextLine();
+						if (line.contains(playerLoginName) && line.contains(playerLoginPassword)) {
+							// playerMatched
+							loggedIn = 1;
+							sendMessage("Login successful");
+						}
+					}
+					if (loggedIn == 0) {
+						sendMessage("The Player Name and Password do not match!");
+					}
+					if (loggedIn == 1)
+						do {
+							sendMessage("type exit to logout or anything else to loop");
+							message = (String) in.readObject();
+						} while (!message.equalsIgnoreCase("Exit"));
+				}
 				// Press X to exit or anything else to return to the top of the do/while
 				sendMessage(Services.terminateConnection());
 				message = (String) in.readObject();

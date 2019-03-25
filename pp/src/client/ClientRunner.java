@@ -54,9 +54,43 @@ public class ClientRunner {
 					System.out.println(message);
 					message = input.next();
 					sendMessage(message);
-					
+
+					// Welcome message
 					message = (String) in.readObject();
 					System.out.println(message);
+				}
+
+				else if (message.equals("2")) {
+					// Dealing with information message to user
+					message = (String) in.readObject();
+					System.out.println(message);
+
+					// Entering player name
+					message = (String) in.readObject();
+					System.out.println(message);
+					// Needed two of these otherwise the program would just skip and send a blank
+					// line
+					message = input.nextLine();
+					message = input.nextLine();
+					sendMessage(message);
+
+					// Entering player password
+					message = (String) in.readObject();
+					System.out.println(message);
+					message = input.next();
+					sendMessage(message);
+
+					// Result of trying to login
+					message = (String) in.readObject();
+					System.out.println(message);
+
+					if (message.contains("Login successful")) {
+						// Entering which option (3-7 they wish to choose)
+						message = (String) in.readObject();
+						System.out.println(message);
+						String option = input.next();
+						sendMessage(option);
+					}
 				}
 				// Loop, X to exit or anything else to return
 				message = (String) in.readObject();
