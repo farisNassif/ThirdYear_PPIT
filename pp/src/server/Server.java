@@ -55,9 +55,9 @@ public class Server extends Thread {
 					+ clientSocket.getInetAddress().getHostName());
 
 			do {
-				// Welcome, Press 1 for Login or 2 for Registration
+				// Welcome, Enter 1 for Login or 2 for Registration
 				// sendMessage(Services.welcomeUser());
-				sendMessage("\nWelcome to our Online Card Game Library\nPlease press 1 to Register OR 2 to Login");
+				sendMessage("\nWelcome to our Online Card Game Library\nPlease enter 1 to Register OR 2 to Login");
 				message = (String) in.readObject();
 
 				// Passing 1,2 or Invalid input to this method + Sending result
@@ -109,11 +109,11 @@ public class Server extends Thread {
 					}
 					if (loggedIn == 1)
 						do {
-							sendMessage("type exit to logout or anything else to loop");
+							sendMessage("Enter exit to logout or anything else to loop");
 							message = (String) in.readObject();
 						} while (!message.equalsIgnoreCase("Exit"));
 				}
-				// Press X to exit or anything else to return to the top of the do/while
+				// Enter X to exit or anything else to return to the top of the do/while
 				sendMessage(Services.terminateConnection());
 				message = (String) in.readObject();
 

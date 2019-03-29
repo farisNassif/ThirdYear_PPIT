@@ -29,75 +29,18 @@ public class ClientRunner {
 			in = new ObjectInputStream(requestSocket.getInputStream());
 
 			do {
-				// Welcome, Press 1 for Registration or 2 for Login
 				message = (String) in.readObject();
-				System.out.println(message);
-				message = input.next();
-				sendMessage(message);
-
-				if (message.equals("1")) {
-					// You have chosen to Register
-					message = (String) in.readObject();
-					System.out.println(message);
-
-					// Dealing with Player Name
-					message = (String) in.readObject();
-					System.out.println(message);
-					// Needed two of these otherwise the program would just skip and send a blank
-					// line
-					message = input.nextLine();
-					message = input.nextLine();
-					sendMessage(message);
-
-					// Dealing with Player Password
-					message = (String) in.readObject();
+				if (message.toLowerCase().contains("enter"))
+				{
+					//message = (String) in.readObject();
 					System.out.println(message);
 					message = input.next();
 					sendMessage(message);
-
-					// Welcome message
-					message = (String) in.readObject();
+				}
+				else 
+				{
 					System.out.println(message);
 				}
-
-				else if (message.equals("2")) {
-					// Dealing with information message to user
-					message = (String) in.readObject();
-					System.out.println(message);
-
-					// Entering player name
-					message = (String) in.readObject();
-					System.out.println(message);
-					// Needed two of these otherwise the program would just skip and send a blank
-					// line
-					message = input.nextLine();
-					message = input.nextLine();
-					sendMessage(message);
-
-					// Entering player password
-					message = (String) in.readObject();
-					System.out.println(message);
-					message = input.next();
-					sendMessage(message);
-
-					// Result of trying to login
-					message = (String) in.readObject();
-					System.out.println(message);
-
-					if (message.contains("Login successful")) {
-						// Entering which option (3-7 they wish to choose)
-						message = (String) in.readObject();
-						System.out.println(message);
-						String option = input.next();
-						sendMessage(option);
-					}
-				}
-				// Loop, X to exit or anything else to return
-				message = (String) in.readObject();
-				System.out.println(message);
-				message = input.next();
-				sendMessage(message);
-
 			} while (!message.equalsIgnoreCase("x"));
 
 			// Notifying client of connection termination
