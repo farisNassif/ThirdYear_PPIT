@@ -28,8 +28,11 @@ public class ClientRunner {
 			out.flush();
 			in = new ObjectInputStream(requestSocket.getInputStream());
 
+			// Will loop until the user opts to exit
 			do {
+				// Initial object read
 				message = (String) in.readObject();
+				// If the message from the server contains enter, traverse the if
 				if (message.toLowerCase().contains("enter"))
 				{
 					//message = (String) in.readObject();
@@ -38,6 +41,7 @@ public class ClientRunner {
 					sendMessage(message);
 				}
 				else 
+				// Otherwise it's just a display message
 				{
 					System.out.println(message);
 				}
