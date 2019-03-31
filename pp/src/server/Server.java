@@ -9,6 +9,13 @@ import java.io.ObjectOutputStream;
 import java.net.Socket;
 import java.util.Scanner;
 
+import com.mysql.jdbc.jdbc2.optional.MysqlDataSource;
+
+import java.sql.Connection;
+import java.sql.Statement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+
 import services.Services;
 import services.Validation;
 
@@ -44,6 +51,36 @@ public class Server extends Thread {
 	}
 
 	public void run() {
+		try {
+			MysqlDataSource mysqlDS = new MysqlDataSource();
+
+			mysqlDS.setURL("jdbc:mysql://localhost:3306/superheroes");
+			mysqlDS.setUser("root");
+			mysqlDS.setPassword("");
+
+			Connection conn = mysqlDS.getConnection();
+			Statement myStmt = conn.createStatement();
+			String query = "select * from superhero_table";
+			ResultSet rs = myStmt.executeQuery(query);
+
+			while (rs.next()) {
+				String name = rs.getString("name");
+				String realFirstName = rs.getString("real_first_name");
+				String realSurname = rs.getString("real_surname");
+				String dob = rs.getString("dob");
+				String powers = rs.getString("powers");
+				// System.out.println("Name = " + name);
+				// System.out.println("Real First Name = " + realFirstName);
+				// System.out.println("Real Surname = " + realSurname);
+				// System.out.println("Date of Birth = " + dob);
+				// System.out.println("Powers = " + powers);
+
+				System.out.println(name + ", " + realFirstName + ", " + dob + ", " + powers);
+
+			}
+		} catch (SQLException se) {
+			System.out.println(se.getMessage());
+		}
 		// Client Accepted
 		System.out.println(
 				"Accepted Client : ID - " + clientID + " : Address - " + clientSocket.getInetAddress().getHostName());
