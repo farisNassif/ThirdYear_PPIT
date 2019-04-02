@@ -11,6 +11,7 @@ import java.util.Scanner;
 
 import services.Services;
 import services.Validation;
+import database.SQL;
 
 public class Server extends Thread {
 	Socket clientSocket;
@@ -55,6 +56,8 @@ public class Server extends Thread {
 					+ clientSocket.getInetAddress().getHostName());
 
 			do {
+				// Initiates the SQL Connection
+				SQL.main();
 				// Welcome, Enter 1 for Login or 2 for Registration
 				// sendMessage(Services.welcomeUser());
 				sendMessage("\nWelcome to our Online Card Game Library\nPlease enter 1 to Register OR 2 to Login");
@@ -76,16 +79,13 @@ public class Server extends Thread {
 					sendMessage("Please enter your Password");
 					playerPassword = (String) in.readObject();
 
-					writer.newLine();
-					// Writing their Player Name, Password & Client ID to server file
-					writer.write((playerName + " " + playerPassword + " " + clientSocket.getInetAddress().getHostName()
-							+ " SHOULD BE local address: " + clientSocket.getLocalAddress().getHostAddress()));
-					sendMessage("Welcome " + playerName + ", Your account is now registered and you may Log in.");
-					writer.close();
+					// Saving their information in a database
+					SQL.insertUser(playerName, playerPassword);
 				} else if (message.equalsIgnoreCase("2")) {
 					// Logged in = false until user verified/logged in correctly
 					loggedIn = 0;
 					// Reading the file for validation (Making sure email + id is unique)
+					@SuppressWarnings("resource")
 					Scanner scanner = new Scanner(new File("players.txt"));
 
 					sendMessage("You have chosen to Login");
