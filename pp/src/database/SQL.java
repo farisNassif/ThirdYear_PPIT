@@ -14,19 +14,22 @@ public class SQL {
 	private static Statement statement = null;
 
 	public static void main() throws Exception {
-		try {
-			// Max amount of time driver will wait is 15s
-			DriverManager.setLoginTimeout(15);
-			connection = DriverManager.getConnection(DATABASE_URL, "root", "");
-			// Create database if not exists
-			createDatabase();
-			createTables();
-		} catch (SQLException ex) {
-			System.out.println("The following exception has occured: " + ex.getMessage());
-		}
+		// Opens the connection
+		openConnection();
+		// Create database if not exists
+		createDatabase();
+		// Creates the tables if they don't already exist
+		createTables();
 	}
 
-	// private static void
+	private static void openConnection() {
+		DriverManager.setLoginTimeout(15);
+		try {
+			connection = DriverManager.getConnection(DATABASE_URL, "root", "");
+		} catch (SQLException e) {
+			System.out.println("The following exception has occured: " + e.getMessage());
+		}
+	}
 
 	private static void createTables() throws SQLException {
 		String sqlCreate = "CREATE TABLE IF NOT EXISTS " + "users" + "  (name     VARCHAR(25),"
@@ -48,15 +51,18 @@ public class SQL {
 	}
 
 	public static void insertUser(String name, String password) throws SQLException {
-		//DriverManager.setLoginTimeout(15);
-		//try {
-		//	connection = DriverManager.getConnection(DATABASE_URL, "root", "");
-		//} catch (SQLException e) {
-		//	// TODO Auto-generated catch block
-		//	e.printStackTrace();
-		//}
-	    String insertUser = "INSERT INTO USERS VALUES ('" + name + "', '" + password + "')";
+		String insertUser = "INSERT INTO USERS VALUES ('" + name + "', '" + password + "')";
 		statement = connection.createStatement();
 		statement.execute(insertUser);
+	}
+
+	public static void closeConnection(String clientIP) {
+		try {
+			connection.close();
+			System.out.println("Closing SQL Connection for client " + clientIP + " ...");
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 }

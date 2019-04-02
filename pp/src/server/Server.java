@@ -124,6 +124,8 @@ public class Server extends Thread {
 					+ clientSocket.getInetAddress().getHostName());
 			System.out.println(
 					"Ending Client : ID - " + clientID + " : Address - " + clientSocket.getInetAddress().getHostName());
+			// Closing the SQL Connection;
+			SQL.closeConnection(clientSocket.getInetAddress().getHostName());
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
