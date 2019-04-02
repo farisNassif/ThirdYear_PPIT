@@ -32,8 +32,11 @@ public class SQL {
 	}
 
 	private static void createTables() throws SQLException {
-		String sqlCreate = "CREATE TABLE IF NOT EXISTS " + "users" + "  (name     VARCHAR(25),"
-				+ "   password VARCHAR(20))";
+		String sqlCreate = "CREATE TABLE IF NOT EXISTS " + "users" + "  "
+				+ "(user_id SMALLINT(6) NOT NULL AUTO_INCREMENT,"
+				+ "name     VARCHAR(25),"
+				+ "password VARCHAR(20),"
+				+ "PRIMARY KEY(user_id)) Engine=InnoDB";
 
 		statement = connection.createStatement();
 		statement.execute(sqlCreate);
@@ -51,7 +54,7 @@ public class SQL {
 	}
 
 	public static void insertUser(String name, String password) throws SQLException {
-		String insertUser = "INSERT INTO USERS VALUES ('" + name + "', '" + password + "')";
+		String insertUser = "INSERT INTO USERS VALUES (0,'" + name + "', '" + password + "')";
 		statement = connection.createStatement();
 		statement.execute(insertUser);
 	}
@@ -64,5 +67,11 @@ public class SQL {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+	}
+	
+	public static void queryForUser() {
+		//String sql_stmt = "SELECT * FROM " + dbName + ";";
+		//statement = connection.createStatement();
+		//statement.executeQuery(sql)
 	}
 }
