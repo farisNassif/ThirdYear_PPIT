@@ -73,13 +73,16 @@ public class SQL {
 		String query = "SELECT * from users WHERE name ='" + name + "' AND password = '" + password + "'";
 		ResultSet rs = statement.executeQuery(query);
 		while (rs.next()) {
-			int userId = rs.getInt("user_id");
+			// userName is what was returned under the 'Name' column when the query was ran
 			String userName = rs.getString("name");
+			// userPassword is what was returned under the 'Password' column when the query was run
 			String userPassword = rs.getString("password");
+			
+			// If the name returned and the password returned match the input username and password
 			if ((userName.equals(name)) && (userPassword.equals(password))) {
-				System.out.println("User ID = " + userId);
-				System.out.println("Name = " + userName);
-				System.out.println("password = " + userPassword);
+				// System.out.println("User ID = " + userId);
+				// System.out.println("Name = " + userName);
+				// System.out.println("password = " + userPassword);
 
 				found = true;
 			} else {

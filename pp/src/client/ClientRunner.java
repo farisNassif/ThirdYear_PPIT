@@ -83,6 +83,7 @@ public class ClientRunner {
 	}
 
 	public static void main(String args[]) {
+		// Where program is ran from
 		ClientRunner client = new ClientRunner();
 		client.run();
 	}
