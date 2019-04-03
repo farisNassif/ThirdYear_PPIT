@@ -2,6 +2,7 @@ package database;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 
@@ -33,9 +34,7 @@ public class SQL {
 
 	private static void createTables() throws SQLException {
 		String sqlCreate = "CREATE TABLE IF NOT EXISTS " + "users" + "  "
-				+ "(user_id SMALLINT(6) NOT NULL AUTO_INCREMENT,"
-				+ "name     VARCHAR(25),"
-				+ "password VARCHAR(20),"
+				+ "(user_id SMALLINT(6) NOT NULL AUTO_INCREMENT," + "name     VARCHAR(25)," + "password VARCHAR(20),"
 				+ "PRIMARY KEY(user_id)) Engine=InnoDB";
 
 		statement = connection.createStatement();
@@ -68,10 +67,25 @@ public class SQL {
 			e.printStackTrace();
 		}
 	}
-	
-	public static void queryForUser() {
-		//String sql_stmt = "SELECT * FROM " + dbName + ";";
-		//statement = connection.createStatement();
-		//statement.executeQuery(sql)
+
+	public static boolean queryForUser(String name, String password) throws SQLException {
+		boolean found = false;
+		String query = "SELECT * from users WHERE name ='" + name + "' AND password = '" + password + "'";
+		ResultSet rs = statement.executeQuery(query);
+		while (rs.next()) {
+			int userId = rs.getInt("user_id");
+			String userName = rs.getString("name");
+			String userPassword = rs.getString("password");
+			if ((userName.equals(name)) && (userPassword.equals(password))) {
+				System.out.println("User ID = " + userId);
+				System.out.println("Name = " + userName);
+				System.out.println("password = " + userPassword);
+
+				found = true;
+			} else {
+				found = false;
+			}
+		}
+		return found;
 	}
 }

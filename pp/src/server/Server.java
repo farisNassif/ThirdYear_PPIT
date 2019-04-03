@@ -96,22 +96,18 @@ public class Server extends Thread {
 					sendMessage("Please enter your password");
 					playerLoginPassword = (String) in.readObject();
 
-					while (scanner.hasNextLine()) {
-						String line = scanner.nextLine();
-						if (line.contains(playerLoginName) && line.contains(playerLoginPassword)) {
-							// playerMatched
-							loggedIn = 1;
-							sendMessage("Login successful");
-						}
-					}
-					if (loggedIn == 0) {
-						sendMessage("The Player Name and Password do not match!");
-					}
-					if (loggedIn == 1)
+					if (SQL.queryForUser(playerLoginName, playerLoginPassword) == true) {
+						// Player is matched and found in the database!
+						loggedIn = 1;
+						sendMessage("Login successful, Welcome " + playerLoginName);
 						do {
 							sendMessage("Enter exit to logout or anything else to loop");
 							message = (String) in.readObject();
 						} while (!message.equalsIgnoreCase("Exit"));
+					}
+					else {
+						sendMessage("\nDetails not found within the Database, please try again");
+					}
 				}
 				// Enter X to exit or anything else to return to the top of the do/while
 				sendMessage(Services.terminateConnection());
