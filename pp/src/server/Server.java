@@ -70,14 +70,19 @@ public class Server extends Thread {
 				if (message.equalsIgnoreCase("1")) {
 					sendMessage("You have chosen to Register");
 
-					// Writing to the file
-					BufferedWriter writer = new BufferedWriter(new FileWriter("Players.txt", true));
-
 					sendMessage("Please enter your Player Name");
 					playerName = (String) in.readObject();
 
-					sendMessage("Please enter your Password");
+					sendMessage("Please enter your Password (Least 6 Characters)");
 					playerPassword = (String) in.readObject();
+					
+					// Loop until it's 6 characters
+					while (playerPassword.length() < 6)
+					{
+						sendMessage("Please enter your Password (Least 6 Characters)");
+						playerPassword = (String) in.readObject();
+					}
+					
 
 					// Saving their information in a database
 					SQL.insertUser(playerName, playerPassword);
@@ -110,11 +115,13 @@ public class Server extends Thread {
 					}
 				}
 				// Enter X to exit or anything else to return to the top of the do/while
-				sendMessage(Services.terminateConnection());
+				sendMessage(Services.loopMessage());
 				message = (String) in.readObject();
 
 			} while (!message.equalsIgnoreCase("X"));
 
+			
+			sendMessage(Services.terminatingConnection(clientID, clientSocket.getInetAddress().getHostName() ));
 			// Just to know a Client has ended their connection
 			sendMessage("Terminating your Client Connection : ID - " + clientID + " : Address - "
 					+ clientSocket.getInetAddress().getHostName());

@@ -49,7 +49,7 @@ public class SQL {
 		// Executes the statement
 		statement.executeUpdate(sql_stmt);
 		// Just notifying that this method was executed, can remove later
-		System.out.println("Required databse setup correctly");
+		System.out.println("<Required databse setup correctly>");
 	}
 
 	public static void insertUser(String name, String password) throws SQLException {
@@ -75,10 +75,12 @@ public class SQL {
 		while (rs.next()) {
 			// userName is what was returned under the 'Name' column when the query was ran
 			String userName = rs.getString("name");
-			// userPassword is what was returned under the 'Password' column when the query was run
+			// userPassword is what was returned under the 'Password' column when the query
+			// was run
 			String userPassword = rs.getString("password");
-			
-			// If the name returned and the password returned match the input username and password
+
+			// If the name returned and the password returned match the input username and
+			// password
 			if ((userName.equals(name)) && (userPassword.equals(password))) {
 				// System.out.println("User ID = " + userId);
 				// System.out.println("Name = " + userName);

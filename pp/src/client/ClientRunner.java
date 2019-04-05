@@ -33,14 +33,12 @@ public class ClientRunner {
 				// Initial object read
 				message = (String) in.readObject();
 				// If the message from the server contains enter, traverse the if
-				if (message.toLowerCase().contains("enter"))
-				{
-					//message = (String) in.readObject();
+				if (message.toLowerCase().contains("enter")) {
+					// message = (String) in.readObject();
 					System.out.println(message);
 					message = input.next();
 					sendMessage(message);
-				}
-				else 
+				} else
 				// Otherwise it's just a display message
 				{
 					System.out.println(message);

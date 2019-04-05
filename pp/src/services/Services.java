@@ -6,12 +6,16 @@ import java.util.concurrent.ThreadLocalRandom;
 public class Services {
 	
 	public static String welcomeUser() {
-		return "\nWelcome to our Online Card Game Library\nPlease enter 1 to Login OR 2 to Register";
+		return "\nWelcome to our Online Card Game Library\nPlease enter 1 to Register OR 2 to Login";
 	}
 
-	public static String terminateConnection() {
-		return "Enter X to Terminate your connection OR any other key to Continue";
-
+	public static String loopMessage() {
+		return "Enter X to Terminate your connection OR any other key to return to the Main Menu";
+	}
+	
+	public static String terminatingConnection(int clientID, String address) {
+		return "Terminating your Client Connection : ID - " + clientID + " : Address - "
+				+ address;
 	}
 
 	public static void shuffledeck(int j, int num, int shuffledDeck[]) {
