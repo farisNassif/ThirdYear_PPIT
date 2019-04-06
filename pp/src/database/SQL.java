@@ -32,6 +32,7 @@ public class SQL {
 		}
 	}
 
+	// Makes the tables if the don't already exist
 	private static void createTables() throws SQLException {
 		String sqlCreate = "CREATE TABLE IF NOT EXISTS " + "users" + "  "
 				+ "(user_id SMALLINT(6) NOT NULL AUTO_INCREMENT," + "name     VARCHAR(25)," + "password VARCHAR(20),"
@@ -41,6 +42,7 @@ public class SQL {
 		statement.execute(sqlCreate);
 	}
 
+	// Creates the databse if it doesn't exist (it should, but just incase)
 	private static void createDatabase() throws SQLException {
 		// Statement that creates the database if it doesn't exist
 		String sql_stmt = "CREATE DATABASE IF NOT EXISTS " + dbName + " CHARACTER SET " + charSet + " COLLATE "

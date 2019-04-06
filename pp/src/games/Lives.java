@@ -16,6 +16,7 @@ import java.io.ObjectInputStream;
 
 public class Lives {
 	private static Scanner console;
+	static String input = "";
 	static int roundNum = 0;
 	static int playerLives[] = { 5, 5, 5, 5, 5, 5, 5, 5, 5, 5 };
 	static int deck[] = { 2, 2, 2, 2, 3, 3, 3, 3, 4, 4, 4, 4, 5, 5, 5, 5, 6, 6, 6, 6, 7, 7, 7, 7, 8, 8, 8, 8, 9, 9, 9,
@@ -29,7 +30,6 @@ public class Lives {
 		
 		console = new Scanner(System.in);
 		int option = 0;
-		String input;
 
 		do {
 			sendMessage("Would you like to:\nEnter 1. Start a new game of Lives\nEnter 2. Load a previous game of Lives", out);
@@ -38,8 +38,10 @@ public class Lives {
 			option = Integer.parseInt(input);
 
 			if (option == 1) {
-				sendMessage("How many players are there?(max 10)", out);
-				amtPlayers = console.nextInt();
+				sendMessage("Enter how many players are there?(max 10)", out);
+				input = (String) in.readObject();
+				Integer.parseInt(input);
+				amtPlayers = Integer.parseInt(input);
 				
 			} else if (option == 2) {
 				loadGame();
@@ -51,18 +53,17 @@ public class Lives {
 			while (roundNum < 5) {
 				for (int i = 0; i < amtPlayers; i++)// each player selects card
 				{
-					playRound(i);
+					playRound(i, out, in);
 				}
 				roundNum++;
 			}
-			System.out.print("At the end of the round the lives are: ");
+			sendMessage("At the end of the round the lives are: ", out);
 			for (int i = 0; i < amtPlayers; i++) {
-				System.out.print("player " + (i + 1) + " has " + playerLives[i] + " lives ");
+				sendMessage("player " + (i + 1) + " has " + playerLives[i] + " lives ", out);
 			}
-			System.out.println();
 			roundNum = 0;
 			checkLives();
-			saveGame();
+			saveGame(out);
 			
 		}	
 	}
@@ -111,16 +112,16 @@ public class Lives {
 		}
 	}
 
-	private static void saveGame() {
+	private static void saveGame(ObjectOutputStream out) {
 		try (FileWriter fw = new FileWriter("gamestate.txt", false);
 				BufferedWriter bw = new BufferedWriter(fw);
-				PrintWriter out = new PrintWriter(bw)) {
-			out.println(amtPlayers);
-			System.out.println("Saving the Game!");
+				PrintWriter outt = new PrintWriter(bw)) {
+			outt.println(amtPlayers);
+			sendMessage("Saving the Game!", out);
 			for (int i = 0; i < amtPlayers; i++) {
-				out.println(playerLives[i]);
+				outt.println(playerLives[i]);
 			}
-			out.close();
+			outt.close();
 		} catch (IOException e) {
 		}
 
@@ -148,52 +149,56 @@ public class Lives {
 		}
 	}
 
-	public static void playRound(int playerTurn) {
-		System.out.printf("Player %d enter any number when ready:\n", playerTurn + 1);// used to conceal cards from
-																						// previous
+	public static void playRound(int playerTurn, ObjectOutputStream out, ObjectInputStream in) throws ClassNotFoundException, IOException {
+		// Used to conceal cards from other players
+		sendMessage("Player " + (playerTurn + 1) + " Enter something when you're ready to see your cards", out);
+		String input = (String) in.readObject();
+														
 
 		for (int j = 0; j < 5 - roundNum; j++) {
 			if (hands[(playerTurn)][j] <= 10) {
-				System.out.printf("%d.%d\n", j, hands[(playerTurn)][j]);
+				sendMessage(j +"."+hands[(playerTurn)][j], out);
 			} else if (hands[(playerTurn)][j] == 11) {
-				System.out.printf("%d.J\n", j);
+				sendMessage(j +".J", out);
 			} else if (hands[(playerTurn)][j] == 12) {
-				System.out.printf("%d.Q\n", j);
+				sendMessage(j +".Q", out);
 			} else if (hands[(playerTurn)][j] == 13) {
-				System.out.printf("%d.K\n", j);
+				sendMessage(j +".K", out);
 			} else if (hands[(playerTurn)][j] == 14) {
-				System.out.printf("%d.A\n", j);
+				sendMessage(j +".A", out);
 			}
 		}
 		int playerChoice = 0;
-		System.out.printf("Player %d enter the index number of the card you would like to play\n", playerTurn + 1);
+		sendMessage("Player " + (playerTurn + 1) + " Enter the index number of the card you would like to play\n", out);
 		do {
 
-			playerChoice = console.nextInt();
+			input = (String) in.readObject();
+			Integer.parseInt(input);
+			playerChoice = Integer.parseInt(input);
 
 			if (playerChoice > 4 - roundNum || playerChoice < -1) {
-				System.out.println("Please enter a valid int");
+				sendMessage("Please enter a valid input", out);
 			}
 		} while (playerChoice > 4 - roundNum || playerChoice < -1);
 
 		if (hands[(playerTurn)][playerChoice] <= 10) {
-			System.out.println("Player " + (playerTurn + 1) + " played a " + hands[(playerTurn)][playerChoice]);
+			sendMessage("Player " + (playerTurn + 1) + " played a " + hands[(playerTurn)][playerChoice], out);
 		} else if (hands[(playerTurn)][playerChoice] == 11) {
-			System.out.println("Player " + (playerTurn + 1) + " played a J");
+			sendMessage("Player " + (playerTurn + 1) + " played a J", out);
 		} else if (hands[(playerTurn)][playerChoice] == 12) {
-			System.out.println("Player " + (playerTurn + 1) + " played a Q");
+			sendMessage("Player " + (playerTurn + 1) + " played a Q", out);
 		} else if (hands[(playerTurn)][playerChoice] == 13) {
-			System.out.println("Player " + (playerTurn + 1) + " played a K");
+			sendMessage("Player " + (playerTurn + 1) + " played a K", out);
 		} else if (hands[(playerTurn)][playerChoice] == 14) {
-			System.out.println("Player " + (playerTurn + 1) + " played a A");
+			sendMessage("Player " + (playerTurn + 1) + " played a A", out);
 		}
 		if (hands[(playerTurn)][playerChoice] == lastcard) {
-			System.out.println("Player loses 1 life!");
+			sendMessage("Player loses 1 life!", out);
 			if (playerTurn == 0) {
-				System.out.println("player " + (amtPlayers) + " loses life!");
+				sendMessage("player " + (amtPlayers) + " loses life!", out);
 				playerLives[amtPlayers - 1]--;
 			} else {
-				System.out.println("player " + playerTurn + " loses life!");
+				sendMessage("player " + playerTurn + " loses life!", out);
 				playerLives[playerTurn - 1]--;
 			}
 		}
