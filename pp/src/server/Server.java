@@ -1,13 +1,9 @@
 package server;
 
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
-import java.util.Scanner;
 
 import services.Services;
 import services.Validation;
@@ -20,8 +16,6 @@ public class Server extends Thread {
 	boolean running = true;
 	static ObjectOutputStream out;
 	static ObjectInputStream in;
-	// Used to see if file information is duplicated
-	private boolean unique = true;
 	// Used for registration/login
 	private String playerName;
 	private String playerPassword;
@@ -59,12 +53,8 @@ public class Server extends Thread {
 				// Initiates the SQL Connection
 				SQL.main();
 				// Welcome, Enter 1 for Login or 2 for Registration
-				// sendMessage(Services.welcomeUser());
-				sendMessage("\nWelcome to our Online Card Game Library\nPlease enter 1 to Register OR 2 to Login");
+				sendMessage(Services.welcomeUser());
 				message = (String) in.readObject();
-
-				// Passing 1,2 or Invalid input to this method + Sending result
-				// sendMessage(Validation.loginOrRegister(message));
 
 				// If the user entered 1 or 2, execute if
 				if (message.equalsIgnoreCase("1")) {
@@ -75,23 +65,18 @@ public class Server extends Thread {
 
 					sendMessage("Please enter your Password (Least 6 Characters)");
 					playerPassword = (String) in.readObject();
-					
+
 					// Loop until it's 6 characters
-					while (playerPassword.length() < 6)
-					{
+					while (playerPassword.length() < 6) {
 						sendMessage("Please enter your Password (Least 6 Characters)");
 						playerPassword = (String) in.readObject();
 					}
-					
 
 					// Saving their information in a database
 					SQL.insertUser(playerName, playerPassword);
 				} else if (message.equalsIgnoreCase("2")) {
 					// Logged in = false until user verified/logged in correctly
 					loggedIn = 0;
-					// Reading the file for validation (Making sure email + id is unique)
-					@SuppressWarnings("resource")
-					Scanner scanner = new Scanner(new File("players.txt"));
 
 					sendMessage("You have chosen to Login");
 
@@ -105,12 +90,15 @@ public class Server extends Thread {
 						// Player is matched and found in the database!
 						loggedIn = 1;
 						sendMessage("Login successful, Welcome " + playerLoginName);
+						
+						// Executes what needs to execute once a user is Logged in
 						do {
+							games.Lives.runGame(in, out);
+							
 							sendMessage("Enter exit to logout or anything else to loop");
 							message = (String) in.readObject();
 						} while (!message.equalsIgnoreCase("Exit"));
-					}
-					else {
+					} else {
 						sendMessage("\nDetails not found within the Database, please try again");
 					}
 				}
@@ -120,26 +108,12 @@ public class Server extends Thread {
 
 			} while (!message.equalsIgnoreCase("X"));
 
-			
-			sendMessage(Services.terminatingConnection(clientID, clientSocket.getInetAddress().getHostName() ));
-			// Just to know a Client has ended their connection
-			sendMessage("Terminating your Client Connection : ID - " + clientID + " : Address - "
-					+ clientSocket.getInetAddress().getHostName());
-			System.out.println(
-					"Ending Client : ID - " + clientID + " : Address - " + clientSocket.getInetAddress().getHostName());
+			// Message that alerts client of connection termination
+			sendMessage(Services.terminatingConnection(clientID, clientSocket.getInetAddress().getHostName()));
 			// Closing the SQL Connection;
 			SQL.closeConnection(clientSocket.getInetAddress().getHostName());
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
 	}
-
-	public static void loginUser() {
-
-	}
-
-	public static void registerUser() {
-
-	}
-
 }

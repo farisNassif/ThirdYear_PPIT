@@ -12,9 +12,6 @@ public class ClientRunner {
 	String ipaddress;
 	Scanner input;
 
-	ClientRunner() {
-	}
-
 	void run() {
 		input = new Scanner(System.in);
 		try {
@@ -85,15 +82,4 @@ public class ClientRunner {
 		ClientRunner client = new ClientRunner();
 		client.run();
 	}
-
-	/*
-	 * public void readInAndPrintMessage() throws ClassNotFoundException,
-	 * IOException { message = (String) in.readObject();
-	 * System.out.println(message); }
-	 */
-
-	/*
-	 * public void sendMessageToServer() { message = input.next();
-	 * sendMessage(message); }
-	 */
 }

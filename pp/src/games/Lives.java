@@ -2,6 +2,7 @@ package games;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
+import java.io.ObjectOutputStream;
 import java.io.FileInputStream;
 import java.io.BufferedWriter;
 import java.io.FileNotFoundException;
@@ -11,6 +12,7 @@ import java.io.PrintWriter;
 import java.util.Random;
 import java.util.Scanner;
 import java.util.concurrent.ThreadLocalRandom;
+import java.io.ObjectInputStream;
 
 public class Lives {
 	private static Scanner console;
@@ -23,17 +25,22 @@ public class Lives {
 	static int lastcard = 0;
 	static boolean gameOver = false;
 
-	public static void main(String[] deckgs) {
+	public static void runGame(ObjectInputStream in, ObjectOutputStream out) throws ClassNotFoundException, IOException {
+		
 		console = new Scanner(System.in);
-		int option=0;
+		int option = 0;
+		String input;
 
 		do {
-			System.out.println("Would you like to:\n1. start a new game \n2. load a previous game");
-			option = console.nextInt();
+			sendMessage("Would you like to:\nEnter 1. Start a new game of Lives\nEnter 2. Load a previous game of Lives", out);
+			input = (String) in.readObject();
+			Integer.parseInt(input);
+			option = Integer.parseInt(input);
 
 			if (option == 1) {
-				System.out.println("How many players are there?(max 10)");
+				sendMessage("How many players are there?(max 10)", out);
 				amtPlayers = console.nextInt();
+				
 			} else if (option == 2) {
 				loadGame();
 			}
@@ -56,9 +63,20 @@ public class Lives {
 			roundNum = 0;
 			checkLives();
 			saveGame();
+			
+		}	
+	}
+	
+	public static void sendMessage(String msg, ObjectOutputStream out) {
+		try {
+			out.writeObject(msg);
+			out.flush();
+			System.out.println("To Client ==> " + msg);
+		} catch (IOException ioException) {
+			ioException.printStackTrace();
 		}
 	}
-
+	
 	private static void loadGame() {
 
 		BufferedReader filep = null;
@@ -195,4 +213,5 @@ public class Lives {
 			deck[i] = a;
 		}
 	}
+	
 }
