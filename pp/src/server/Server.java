@@ -37,7 +37,7 @@ public class Server extends Thread {
 	}
 
 	/**
-	 * @param msg Accepts a String which is then sent to the specified client
+	 * @param msg Accepts a String which is then sent to the specified Client
 	 */
 	private static void sendMessage(String msg) {
 		try {
@@ -89,15 +89,13 @@ public class Server extends Thread {
 					}
 
 					// If theres already someone reigstered with the same name + password
-					if (SQL.queryForUser(playerName, playerPassword) == true)
-					{
+					if (SQL.queryForUser(playerName, playerPassword) == true) {
 						sendMessage("Sorry there is already a user with that name and password");
-					}
-					else {
+					} else {
 						sendMessage(playerName + " you are now Registered and may Login!");
 						SQL.insertUser(playerName, playerPassword);
 					}
-					
+
 					// Else if user wants to just Login
 				} else if (message.equalsIgnoreCase("2")) {
 					// Logged in = false until user verified/logged in correctly

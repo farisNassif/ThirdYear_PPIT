@@ -4,6 +4,17 @@ import java.io.*;
 import java.net.*;
 import java.util.Scanner;
 
+import database.SQL;
+import services.Services;
+
+/**
+ * @version 1.2
+ * @author Faris Nassif & Cormac Raftery <br>
+ *         <br>
+ *         The class <b>Client</b> contains all relevant Client code needed to
+ *         communicate with the {@link server#Server()} class. The big majority
+ *         of code is found Server side.
+ */
 public class ClientRunner {
 	Socket requestSocket;
 	static ObjectOutputStream out;
@@ -12,9 +23,20 @@ public class ClientRunner {
 	String ipaddress;
 	Scanner input;
 
-	ClientRunner() {
+	/**
+	 * Executes the {@link #run()} method allowing connection to the Specified
+	 * Server
+	 * 
+	 * @param args
+	 */
+	public static void main(String args[]) {
+		ClientRunner client = new ClientRunner();
+		client.run();
 	}
 
+	/**
+	 * Runs the Client socket on the specified server's IP & Port.
+	 */
 	void run() {
 		input = new Scanner(System.in);
 		try {
@@ -28,7 +50,7 @@ public class ClientRunner {
 			out = new ObjectOutputStream(requestSocket.getOutputStream());
 			out.flush();
 			in = new ObjectInputStream(requestSocket.getInputStream());
-			
+
 			// Will loop until the user opts to exit
 			do {
 				// Initial object read
@@ -68,7 +90,9 @@ public class ClientRunner {
 		}
 	}
 
-	// Sending messages to the server
+	/**
+	 * @param msg Accepts a String which is then sent to the Server
+	 */
 	private static void sendMessage(String msg) {
 		try {
 			out.writeObject(msg);
@@ -76,11 +100,5 @@ public class ClientRunner {
 		} catch (IOException ioException) {
 			ioException.printStackTrace();
 		}
-	}
-
-	public static void main(String args[]) {
-		// Where program is ran from
-		ClientRunner client = new ClientRunner();
-		client.run();
 	}
 }
