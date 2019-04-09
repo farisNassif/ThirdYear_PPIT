@@ -12,9 +12,13 @@ public class ClientRunner {
 	String ipaddress;
 	Scanner input;
 
+	ClientRunner() {
+	}
+	
 	void run() {
 		input = new Scanner(System.in);
 		try {
+			
 			// 1. creating a socket to connect to the server
 			ipaddress = "127.0.0.1";
 			System.out.println("Connection to the Server Established");
@@ -25,21 +29,22 @@ public class ClientRunner {
 			out.flush();
 			in = new ObjectInputStream(requestSocket.getInputStream());
 
+			message = (String) in.readObject();
 			// Will loop until the user opts to exit
 			do {
 				// Initial object read
-				message = (String) in.readObject();
+				
 				// If the message from the server contains enter, traverse the if
 				if (message.toLowerCase().contains("enter")) {
-					// message = (String) in.readObject();
 					System.out.println(message);
-					message = input.next();
+					message = input.nextLine();
 					sendMessage(message);
 				} else
 				// Otherwise it's just a display message
 				{
 					System.out.println(message);
 				}
+				message = (String) in.readObject();
 			} while (!message.equalsIgnoreCase("x"));
 
 			// Notifying client of connection termination

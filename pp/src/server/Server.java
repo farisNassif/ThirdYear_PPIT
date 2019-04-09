@@ -9,6 +9,14 @@ import services.Services;
 import services.Validation;
 import database.SQL;
 
+/**
+ * @version 1.4
+ * @author Faris Nassif & Cormac Raftery <br>
+ *         <br>
+ *         The class <b>Server</b> extends <b>Thread</b> <br>
+ *         Here the client will be able to access all functionality of the
+ *         Program
+ */
 public class Server extends Thread {
 	Socket clientSocket;
 	String message;
@@ -28,6 +36,9 @@ public class Server extends Thread {
 		clientID = i;
 	}
 
+	/**
+	 * @param msg Accepts a String which is then sent to the specified client
+	 */
 	private static void sendMessage(String msg) {
 		try {
 			out.writeObject(msg);
@@ -38,10 +49,15 @@ public class Server extends Thread {
 		}
 	}
 
+	/**
+	 * Runs the client thread through the server, allowing them to navigate the
+	 * Program. The bulk of code contained within {@link server#run()} is wrapped
+	 * within other class methods such as {@link SQL#openConnection()} |
+	 * {@link Services#terminatingConnection(int clientID, String address)} .
+	 */
 	public void run() {
 		// Client Accepted
-		System.out.println(
-				"Accepted Client : ID - " + clientID + " : Address - " + clientSocket.getInetAddress().getHostName());
+		System.out.println(" client ip address =" + clientSocket.getRemoteSocketAddress().toString());
 		try {
 			out = new ObjectOutputStream(clientSocket.getOutputStream());
 			out.flush();
@@ -56,7 +72,7 @@ public class Server extends Thread {
 				sendMessage(Services.welcomeUser());
 				message = (String) in.readObject();
 
-				// If the user entered 1 or 2, execute if
+				// If the user wants to register
 				if (message.equalsIgnoreCase("1")) {
 					sendMessage("You have chosen to Register");
 
@@ -71,9 +87,10 @@ public class Server extends Thread {
 						sendMessage("Please enter your Password (Least 6 Characters)");
 						playerPassword = (String) in.readObject();
 					}
-
 					// Saving their information in a database
 					SQL.insertUser(playerName, playerPassword);
+
+					// Else if user wants to just Login
 				} else if (message.equalsIgnoreCase("2")) {
 					// Logged in = false until user verified/logged in correctly
 					loggedIn = 0;
@@ -90,11 +107,16 @@ public class Server extends Thread {
 						// Player is matched and found in the database!
 						loggedIn = 1;
 						sendMessage("Login successful, Welcome " + playerLoginName);
-						
+
 						// Executes what needs to execute once a user is Logged in
 						do {
-							games.Lives.runGame(in, out);
-							
+							sendMessage("Enter 1 to play lives or anything else to not");
+							String livesOrNot = (String) in.readObject();
+
+							if (livesOrNot.equals("1")) {
+								games.Lives.runGame(in, out);
+							}
+
 							sendMessage("Enter exit to logout or anything else to loop");
 							message = (String) in.readObject();
 						} while (!message.equalsIgnoreCase("Exit"));

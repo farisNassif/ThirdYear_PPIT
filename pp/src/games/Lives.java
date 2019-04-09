@@ -15,10 +15,9 @@ import java.util.concurrent.ThreadLocalRandom;
 import java.io.ObjectInputStream;
 
 public class Lives {
-	private static Scanner console;
 	static String input = "";
 	static int roundNum = 0;
-	static int playerLives[] = { 5, 5, 5, 5, 5, 5, 5, 5, 5, 5 };
+	static int playerLives[] = { 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 };
 	static int deck[] = { 2, 2, 2, 2, 3, 3, 3, 3, 4, 4, 4, 4, 5, 5, 5, 5, 6, 6, 6, 6, 7, 7, 7, 7, 8, 8, 8, 8, 9, 9, 9,
 			9, 10, 10, 10, 10, 11, 11, 11, 11, 12, 12, 12, 12, 13, 13, 13, 13, 14, 14, 14, 14 };
 	static int amtPlayers;
@@ -26,13 +25,15 @@ public class Lives {
 	static int lastcard = 0;
 	static boolean gameOver = false;
 
-	public static void runGame(ObjectInputStream in, ObjectOutputStream out) throws ClassNotFoundException, IOException {
-		
-		console = new Scanner(System.in);
+	public static void runGame(ObjectInputStream in, ObjectOutputStream out)
+			throws ClassNotFoundException, IOException {
+
 		int option = 0;
 
 		do {
-			sendMessage("Would you like to:\nEnter 1. Start a new game of Lives\nEnter 2. Load a previous game of Lives", out);
+			sendMessage(
+					"Would you like to:\nEnter 1. Start a new game of Lives\nEnter 2. Load a previous game of Lives",
+					out);
 			input = (String) in.readObject();
 			Integer.parseInt(input);
 			option = Integer.parseInt(input);
@@ -43,6 +44,16 @@ public class Lives {
 				Integer.parseInt(input);
 				amtPlayers = Integer.parseInt(input);
 				
+				// Making sure there are only a minimum of 2 or max of 10
+				while (amtPlayers > 10 || amtPlayers < 2)
+				{
+					sendMessage("Enter at least 2 players and at most 10", out);
+					input = (String) in.readObject();
+					Integer.parseInt(input);
+					amtPlayers = Integer.parseInt(input);
+				}
+				
+
 			} else if (option == 2) {
 				loadGame();
 			}
@@ -64,10 +75,10 @@ public class Lives {
 			roundNum = 0;
 			checkLives();
 			saveGame(out);
-			
-		}	
+
+		}
 	}
-	
+
 	public static void sendMessage(String msg, ObjectOutputStream out) {
 		try {
 			out.writeObject(msg);
@@ -77,7 +88,7 @@ public class Lives {
 			ioException.printStackTrace();
 		}
 	}
-	
+
 	private static void loadGame() {
 
 		BufferedReader filep = null;
@@ -149,23 +160,23 @@ public class Lives {
 		}
 	}
 
-	public static void playRound(int playerTurn, ObjectOutputStream out, ObjectInputStream in) throws ClassNotFoundException, IOException {
+	public static void playRound(int playerTurn, ObjectOutputStream out, ObjectInputStream in)
+			throws ClassNotFoundException, IOException {
 		// Used to conceal cards from other players
 		sendMessage("Player " + (playerTurn + 1) + " Enter something when you're ready to see your cards", out);
 		String input = (String) in.readObject();
-														
 
 		for (int j = 0; j < 5 - roundNum; j++) {
 			if (hands[(playerTurn)][j] <= 10) {
-				sendMessage(j +"."+hands[(playerTurn)][j], out);
+				sendMessage(j + "." + hands[(playerTurn)][j], out);
 			} else if (hands[(playerTurn)][j] == 11) {
-				sendMessage(j +".J", out);
+				sendMessage(j + ".J", out);
 			} else if (hands[(playerTurn)][j] == 12) {
-				sendMessage(j +".Q", out);
+				sendMessage(j + ".Q", out);
 			} else if (hands[(playerTurn)][j] == 13) {
-				sendMessage(j +".K", out);
+				sendMessage(j + ".K", out);
 			} else if (hands[(playerTurn)][j] == 14) {
-				sendMessage(j +".A", out);
+				sendMessage(j + ".A", out);
 			}
 		}
 		int playerChoice = 0;
@@ -218,5 +229,5 @@ public class Lives {
 			deck[i] = a;
 		}
 	}
-	
+
 }
