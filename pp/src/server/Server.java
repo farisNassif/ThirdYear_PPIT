@@ -87,9 +87,17 @@ public class Server extends Thread {
 						sendMessage("Please enter your Password (Least 6 Characters)");
 						playerPassword = (String) in.readObject();
 					}
-					// Saving their information in a database
-					SQL.insertUser(playerName, playerPassword);
 
+					// If theres already someone reigstered with the same name + password
+					if (SQL.queryForUser(playerName, playerPassword) == true)
+					{
+						sendMessage("Sorry there is already a user with that name and password");
+					}
+					else {
+						sendMessage(playerName + " you are now Registered and may Login!");
+						SQL.insertUser(playerName, playerPassword);
+					}
+					
 					// Else if user wants to just Login
 				} else if (message.equalsIgnoreCase("2")) {
 					// Logged in = false until user verified/logged in correctly

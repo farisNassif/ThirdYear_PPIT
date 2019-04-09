@@ -82,9 +82,9 @@ public class SQL {
 			// If the name returned and the password returned match the input username and
 			// password
 			if ((userName.equals(name)) && (userPassword.equals(password))) {
-				// System.out.println("User ID = " + userId);
-				// System.out.println("Name = " + userName);
-				// System.out.println("password = " + userPassword);
+				//System.out.println("User ID = " + userId);
+				System.out.println("Name = " + userName);
+				System.out.println("password = " + userPassword);
 
 				found = true;
 			} else {
