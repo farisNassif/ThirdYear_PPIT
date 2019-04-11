@@ -13,6 +13,7 @@ public class SQL {
 	private final static String DATABASE_URL = "jdbc:mysql://localhost/GAME_USERS?autoReconnect=true&useSSL=false";
 	private static Connection connection = null;
 	private static Statement statement = null;
+	private static String sqlCreate = " ";
 
 	public static void main() throws Exception {
 		// Opens the connection
@@ -33,10 +34,23 @@ public class SQL {
 	}
 
 	private static void createTables() throws SQLException {
-		String sqlCreate = "CREATE TABLE IF NOT EXISTS " + "users" + "  "
-				+ "(user_id SMALLINT(6) NOT NULL AUTO_INCREMENT," + "name     VARCHAR(25)," + "password VARCHAR(20),"
+		
+		sqlCreate = "CREATE TABLE IF NOT EXISTS " + "users" + "  "
+				+ "(user_id SMALLINT(6) NOT NULL AUTO_INCREMENT," +
+				   "name    VARCHAR(25)," + 
+				   "password VARCHAR(20),"
 				+ "PRIMARY KEY(user_id)) Engine=InnoDB";
 
+		statement = connection.createStatement();
+		statement.execute(sqlCreate);
+		
+		sqlCreate = "CREATE TABLE IF NOT EXISTS " + "player_save" + "  "
+				+ "(save_id SMALLINT(6) NOT NULL AUTO_INCREMENT," +
+				   "name    VARCHAR(25)," + 
+				   "current_game VARCHAR(20)," +
+				   "hand VARCHAR(70),"
+				+ "PRIMARY KEY(save_id)) Engine=InnoDB";
+		
 		statement = connection.createStatement();
 		statement.execute(sqlCreate);
 	}
@@ -63,7 +77,6 @@ public class SQL {
 			connection.close();
 			System.out.println("Closing SQL Connection for client " + clientIP + " ...");
 		} catch (SQLException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}
@@ -75,14 +88,12 @@ public class SQL {
 		while (rs.next()) {
 			// userName is what was returned under the 'Name' column when the query was ran
 			String userName = rs.getString("name");
-			// userPassword is what was returned under the 'Password' column when the query
-			// was run
+			// userPassword is what was returned under the 'Password' col when query was run
 			String userPassword = rs.getString("password");
 
-			// If the name returned and the password returned match the input username and
-			// password
+			// If the name returned and the password returned match the name & pw
 			if ((userName.equals(name)) && (userPassword.equals(password))) {
-				//System.out.println("User ID = " + userId);
+				// System.out.println("User ID = " + userId);
 				System.out.println("Name = " + userName);
 				System.out.println("password = " + userPassword);
 
