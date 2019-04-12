@@ -2,6 +2,8 @@ package games;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.io.BufferedWriter;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -16,6 +18,12 @@ import services.Services;
 // Cormac Raftery & Faris Nassif
 // Class works, need to make it nice and clean though maybe make it smaller by creating some 
 // other classes + methods for delegation
+/**
+ * @version 1.1
+ * @author Cormac Raftery & Faris Nassif  <br>
+ *         <br>
+
+ */
 public class War {
 
 	private final static int dealtCardsAmount = 13;
@@ -36,8 +44,7 @@ public class War {
 	static char facecard;
 	private static Scanner console;
 
-	public static void main(String[] args) {
-
+	public static void runGame(ObjectInputStream in, ObjectOutputStream out) {
 		console = new Scanner(System.in);
 
 		System.out.printf("Would you like to either: \n1.Start a new game\n2.Load the previously saved game\n");
@@ -126,16 +133,16 @@ public class War {
 					// Saves the game
 					try (FileWriter fw = new FileWriter("gamestate.txt", false);
 							BufferedWriter bw = new BufferedWriter(fw);
-							PrintWriter out = new PrintWriter(bw)) {
-						out.println(players);
-						out.println(pointsOnTheBattlefield);
-						out.println(roundNum);
+							PrintWriter outt = new PrintWriter(bw)) {
+						outt.println(players);
+						outt.println(pointsOnTheBattlefield);
+						outt.println(roundNum);
 						for (i = 0; i < players; i++) {
-							out.println(playerPoints[i]);
+							outt.println(playerPoints[i]);
 						}
 						for (i = 0; i < players; i++) {
 							for (j = 0; j < 13; j++) {
-								out.println(hands[i][j]);
+								outt.println(hands[i][j]);
 							}
 						}
 						out.close();
@@ -191,9 +198,7 @@ public class War {
 				}
 			}
 		}
-
-	} // Main Method
-
+	}
 	public static void whowins() {
 		for (i = 0; i < players; i++) {
 			totalRoundPoints += playerCard[i];// totals card values
