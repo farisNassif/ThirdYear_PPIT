@@ -15,14 +15,11 @@ import java.util.Scanner;
 import java.util.concurrent.ThreadLocalRandom;
 import services.Services;
 
-// Cormac Raftery & Faris Nassif
-// Class works, need to make it nice and clean though maybe make it smaller by creating some 
-// other classes + methods for delegation
 /**
  * @version 1.1
- * @author Cormac Raftery & Faris Nassif  <br>
+ * @author Cormac Raftery & Faris Nassif <br>
  *         <br>
-
+ *         War card game
  */
 public class War {
 
@@ -42,16 +39,21 @@ public class War {
 	static int largest, largestPosition;
 	static int roundOption;
 	static char facecard;
+	static String input = "";
 	private static Scanner console;
 
-	public static void runGame(ObjectInputStream in, ObjectOutputStream out) {
+	public static void runGame(ObjectInputStream in, ObjectOutputStream out)
+			throws ClassNotFoundException, IOException {
 		console = new Scanner(System.in);
 
-		System.out.printf("Would you like to either: \n1.Start a new game\n2.Load the previously saved game\n");
-		roundOption = console.nextInt();
+		sendMessage("Would you like to: \nEnter 1. Start a new game\nEnter 2. Load the previously saved game\n", out);
+		input = (String) in.readObject();
+		roundOption = Integer.parseInt(input);
+
 		if (roundOption == 1) {
-			System.out.printf("Please enter the number of players(2-10):");
-			players = console.nextInt();
+			sendMessage("Please enter the number of players(2-10):", out);
+			input = (String) in.readObject();
+			players = Integer.parseInt(input);
 			if (players < 5)// shuffles from one deck
 			{
 				Services.shuffledeck(j, num, shuffledDeck);
@@ -122,9 +124,11 @@ public class War {
 
 		while (roundNum > 0)// detects if the game is finished
 		{
-			System.out.printf(
-					"Would you like to: \n1.Complete the next round\n2.Save the game\n3.Output the game status\n4.Exit the game\n");
-			roundOption = console.nextInt();
+			sendMessage(
+					"Would you like to: \nEnter 1. Complete the next round\nEnter 2. Save the game\nEnter 3. Output the game status\nEnter 4. Exit the game\n",
+					out);
+			input = (String) in.readObject();
+			roundOption = Integer.parseInt(input);
 			while (roundOption != 1) {
 				switch (roundOption) {
 				case 1:// next round
@@ -149,57 +153,64 @@ public class War {
 					} catch (IOException e) {
 						e.printStackTrace();
 					}
-					System.out.printf(
-							"Would you like to: \n1.Complete the next round\n2.Save the game\n3.Output the game status\n4.Exit the game\n");
-					roundOption = console.nextInt();
+					sendMessage(
+							"Would you like to: \nEnter 1. Complete the next round\nEnter 2. Save the game\nEnter 3. Output the game status\nEnter 4. Exit the game\n",
+							out);
+					input = (String) in.readObject();
+					roundOption = Integer.parseInt(input);
 					break;
 				case 3:
 					// Show Score
 					for (i = 1; i <= players; i++) {
-						System.out.printf("Player %d has %d points\n", i, playerPoints[i - 1]);
+						sendMessage("Player " + i + " has " + playerPoints[i - 1] + " points\n", out);
 					}
-					System.out.printf(
-							"Would you like to: \n1.Complete the next round\n2.Save the game\n3.Output the game status\n4.Exit the game\n");
-					roundOption = console.nextInt();
+					sendMessage(
+							"Would you like to: \nEnter 1. Complete the next round\nEnter 2. Save the game\nEnter 3. Output the game status\nEnter 4. Exit the game\n",
+							out);
+					input = (String) in.readObject();
+					roundOption = Integer.parseInt(input);
 					break;
 				case 4:
 					// Exits the Game
 					System.exit(0);
 					break;
 				default:
-					System.out.printf(
-							"Would you like to: \n1.Complete the next round\n2.Save the game\n3.Output the game status\n4.Exit the game\n");
-					roundOption = console.nextInt();
+					sendMessage(
+							"Would you like to: \nEnter 1. Complete the next round\nEnter 2. Save the game\nEnter 3. Output the game status\nEnter 4. Exit the game\n",
+							out);
+					input = (String) in.readObject();
+					roundOption = Integer.parseInt(input);
 					break;
 				}
 			}
 			for (i = 1; i <= players; i++)// each player selects card
 			{
-				playRound(i);
+				playRound(i, in, out);
 			}
 			roundNum--;
 			// Determines the highest unique card value
-			whowins();
+			whowins(in, out);
 			totalRoundPoints = 0;
 			// Print out players played card
 			for (i = 1; i <= players; i++) {
 				// Handles cards 2-10
 				if (playersCard[i - 1] <= 10) {
-					System.out.printf("Player %d played: %d\n", i, playersCard[i - 1]);
+					sendMessage("Player " + i + " played: " + playersCard[i - 1] + "\n", out);
 					// Handles cards J - A
 				} else if (playersCard[i - 1] == 11) {
-					System.out.printf("Player %d played: J\n", i);
+					sendMessage("Player " + i + "  played: J\n", out);
 				} else if (playersCard[i - 1] == 12) {
-					System.out.printf("Player %d played: Q\n", i);
+					sendMessage("Player " + i + "  played: Q\n", out);
 				} else if (playersCard[i - 1] == 13) {
-					System.out.printf("Player %d played: K\n", i);
+					sendMessage("Player " + i + "  played: K\n", out);
 				} else if (playersCard[i - 1] == 14) {
-					System.out.printf("Player %d played: A\n", i);
+					sendMessage("Player " + i + "  played: A\n", out);
 				}
 			}
 		}
 	}
-	public static void whowins() {
+
+	public static void whowins(ObjectInputStream in, ObjectOutputStream out) {
 		for (i = 0; i < players; i++) {
 			totalRoundPoints += playerCard[i];// totals card values
 		}
@@ -224,38 +235,41 @@ public class War {
 		{
 			pointsOnTheBattlefield = totalRoundPoints;
 			totalRoundPoints = 0;
-			System.out.printf("The points are on the battlefield! Next round's winner gets these %d points extra!\n",
-					pointsOnTheBattlefield);
+			sendMessage("The points are on the battlefield! Next round's winner gets these " + pointsOnTheBattlefield
+					+ " points extra!\n", out);
 		} else {
 
 			playerPoints[largestPosition] += totalRoundPoints + pointsOnTheBattlefield;
-			System.out.printf("Player %d wins the round and earns %d points\n", (largestPosition + 1),
-					(totalRoundPoints + pointsOnTheBattlefield));
+			sendMessage("Player " + (largestPosition + 1) + " wins the round and earns "
+					+ (totalRoundPoints + pointsOnTheBattlefield) + " points\n", out);
 			pointsOnTheBattlefield = 0;
 		}
 		j = 0;
 
 	}
 
-	public static void playRound(int playerTurn) {
-		System.out.printf("Player %d enter any number when ready:\n", playerTurn);// used to conceal cards from previous
-																					// player
+	public static void playRound(int playerTurn, ObjectInputStream in, ObjectOutputStream out) throws ClassNotFoundException, IOException {
+		sendMessage("Player " + playerTurn + " enter any number when ready:\n", out);// used to conceal cards from
+																						// previous
+																						// player
 		j = console.nextInt();
 		for (j = 0; j < roundNum; j++) {
 			if (hands[(playerTurn - 1)][j] <= 10) {
-				System.out.printf("%d.%d\n", j, hands[(playerTurn - 1)][j]);
+				sendMessage(j + "." + hands[(playerTurn - 1)][j] + "\n", out);
 			} else if (hands[(playerTurn - 1)][j] == 11) {
-				System.out.printf("%d.J\n", j);
+				sendMessage(j + ".J\n", out);
 			} else if (hands[(playerTurn - 1)][j] == 12) {
-				System.out.printf("%d.Q\n", j);
+				sendMessage(j + ".Q\n", out);
 			} else if (hands[(playerTurn - 1)][j] == 13) {
-				System.out.printf("%d.K\n", j);
+				sendMessage(j + ".K\n", out);
 			} else if (hands[(playerTurn - 1)][j] == 14) {
-				System.out.printf("%d.A\n", j);
+				sendMessage(j + ".A\n", out);
 			}
 		}
-		System.out.printf("Player %d enter the index number of the card you would like to play\n", playerTurn);
-		playerChoice = console.nextInt();
+		sendMessage("Player " + playerTurn +  " enter the index number of the card you would like to play\n", out);
+		input = (String) in.readObject();
+		playerChoice = Integer.parseInt(input);
+		
 		playerCard[(playerTurn - 1)] = hands[(playerTurn - 1)][playerChoice];
 		playersCard[(playerTurn - 1)] = hands[(playerTurn - 1)][playerChoice];// must have 2 similar arrays incase one
 																				// gets set to 0 due to elimination
@@ -275,4 +289,14 @@ public class War {
 			}
 		}
 	} // Deal Method
+
+	public static void sendMessage(String msg, ObjectOutputStream out) {
+		try {
+			out.writeObject(msg);
+			out.flush();
+			System.out.println("To Client ==> " + msg);
+		} catch (IOException ioException) {
+			ioException.printStackTrace();
+		}
+	}
 } // War Class
