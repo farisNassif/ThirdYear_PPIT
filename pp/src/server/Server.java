@@ -116,11 +116,14 @@ public class Server extends Thread {
 
 						// Executes what needs to execute once a user is Logged in
 						do {
-							sendMessage("Enter 1 to play lives or anything else to not");
-							String livesOrNot = (String) in.readObject();
+							sendMessage("Enter 1 to play [Lives], 2 for [War], 3 go [gtfo]");
+							String gameChoice = (String) in.readObject();
 
-							if (livesOrNot.equals("1")) {
+							if (gameChoice.equals("1")) {
 								games.Lives.runGame(in, out);
+							}
+							else if (gameChoice.equals("2")) {
+								games.War.runGame(in, out);
 							}
 
 							sendMessage("Enter exit to logout or anything else to loop");

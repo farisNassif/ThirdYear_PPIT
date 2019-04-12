@@ -162,7 +162,7 @@ public class War {
 				case 3:
 					// Show Score
 					for (i = 1; i <= players; i++) {
-						sendMessage("Player " + i + " has " + playerPoints[i - 1] + " points\n", out);
+						sendMessage("Player " + i + " has " + playerPoints[i - 1] + " points", out);
 					}
 					sendMessage(
 							"Would you like to: \nEnter 1. Complete the next round\nEnter 2. Save the game\nEnter 3. Output the game status\nEnter 4. Exit the game\n",
@@ -250,20 +250,20 @@ public class War {
 
 	public static void playRound(int playerTurn, ObjectInputStream in, ObjectOutputStream out) throws ClassNotFoundException, IOException {
 		sendMessage("Player " + playerTurn + " enter any number when ready:\n", out);// used to conceal cards from
-																						// previous
+		input = (String) in.readObject();
+		j = Integer.parseInt(input);																				// previous
 																						// player
-		j = console.nextInt();
 		for (j = 0; j < roundNum; j++) {
 			if (hands[(playerTurn - 1)][j] <= 10) {
-				sendMessage(j + "." + hands[(playerTurn - 1)][j] + "\n", out);
+				sendMessage(j + "." + hands[(playerTurn - 1)][j], out);
 			} else if (hands[(playerTurn - 1)][j] == 11) {
-				sendMessage(j + ".J\n", out);
+				sendMessage(j + ".J", out);
 			} else if (hands[(playerTurn - 1)][j] == 12) {
-				sendMessage(j + ".Q\n", out);
+				sendMessage(j + ".Q", out);
 			} else if (hands[(playerTurn - 1)][j] == 13) {
-				sendMessage(j + ".K\n", out);
+				sendMessage(j + ".K", out);
 			} else if (hands[(playerTurn - 1)][j] == 14) {
-				sendMessage(j + ".A\n", out);
+				sendMessage(j + ".A", out);
 			}
 		}
 		sendMessage("Player " + playerTurn +  " enter the index number of the card you would like to play\n", out);
