@@ -56,8 +56,6 @@ public class Server extends Thread {
 	 * {@link Services#terminatingConnection(int clientID, String address)} .
 	 */
 	public void run() {
-		// Client Accepted
-		System.out.println(" client ip address =" + clientSocket.getRemoteSocketAddress().toString());
 		try {
 			out = new ObjectOutputStream(clientSocket.getOutputStream());
 			out.flush();
