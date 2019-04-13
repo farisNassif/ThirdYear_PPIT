@@ -123,7 +123,7 @@ public class Server extends Thread {
 								games.Lives.runGame(in, out);
 							}
 							else if (gameChoice.equals("2")) {
-								games.War.runGame(in, out);
+								games.War.runGame(playerLoginName,in, out);
 							}
 
 							sendMessage("Enter exit to logout or anything else to loop");

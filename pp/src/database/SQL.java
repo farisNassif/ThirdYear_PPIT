@@ -44,11 +44,11 @@ public class SQL {
 		statement = connection.createStatement();
 		statement.execute(sqlCreate);
 		
-		sqlCreate = "CREATE TABLE IF NOT EXISTS " + "player_save" + "  "
+		sqlCreate = "CREATE TABLE IF NOT EXISTS " + "war_saves" + "  "
 				+ "(save_id SMALLINT(6) NOT NULL AUTO_INCREMENT," +
-				   "name    VARCHAR(25)," + 
-				   "current_game VARCHAR(20)," +
-				   "hand VARCHAR(70),"
+				   "player_name    VARCHAR(25)," + 
+				   "total_points SMALLINT(8)," +
+				   "round_num SMALLINT(8),"
 				+ "PRIMARY KEY(save_id)) Engine=InnoDB";
 		
 		statement = connection.createStatement();
@@ -66,6 +66,15 @@ public class SQL {
 		System.out.println("Required databse setup correctly");
 	}
 
+	public static void insertWarSave(String name, int totalPoints, int roundNum) throws SQLException {
+		String insertUser = "INSERT INTO WAR_SAVES VALUES (0,'" + name + "', " + totalPoints + ", " + roundNum + ")";
+		System.out.println("pts " + totalPoints);
+		System.out.println("name " + name);
+		System.out.println("rndNm " + roundNum);
+		statement = connection.createStatement();
+		statement.execute(insertUser);
+	}
+	
 	public static void insertUser(String name, String password) throws SQLException {
 		String insertUser = "INSERT INTO USERS VALUES (0,'" + name + "', '" + password + "')";
 		statement = connection.createStatement();

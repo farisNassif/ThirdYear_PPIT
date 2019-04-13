@@ -10,9 +10,12 @@ import java.io.FileNotFoundException;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.sql.SQLException;
 import java.util.Random;
 import java.util.Scanner;
 import java.util.concurrent.ThreadLocalRandom;
+
+import database.SQL;
 import services.Services;
 
 /**
@@ -42,8 +45,8 @@ public class War {
 	static String input = "";
 	private static Scanner console;
 
-	public static void runGame(ObjectInputStream in, ObjectOutputStream out)
-			throws ClassNotFoundException, IOException {
+	public static void runGame(String player, ObjectInputStream in, ObjectOutputStream out)
+			throws ClassNotFoundException, IOException, SQLException {
 		console = new Scanner(System.in);
 
 		sendMessage("Would you like to: \nEnter 1. Start a new game\nEnter 2. Load the previously saved game\n", out);
@@ -134,25 +137,9 @@ public class War {
 				case 1:// next round
 					break;
 				case 2:
-					// Saves the game
-					try (FileWriter fw = new FileWriter("gamestate.txt", false);
-							BufferedWriter bw = new BufferedWriter(fw);
-							PrintWriter outt = new PrintWriter(bw)) {
-						outt.println(players);
-						outt.println(pointsOnTheBattlefield);
-						outt.println(roundNum);
-						for (i = 0; i < players; i++) {
-							outt.println(playerPoints[i]);
-						}
-						for (i = 0; i < players; i++) {
-							for (j = 0; j < 13; j++) {
-								outt.println(hands[i][j]);
-							}
-						}
-						out.close();
-					} catch (IOException e) {
-						e.printStackTrace();
-					}
+					// Saves game
+					System.out.println(pointsOnTheBattlefield);
+					SQL.insertWarSave(player, pointsOnTheBattlefield, roundNum);
 					sendMessage(
 							"Would you like to: \nEnter 1. Complete the next round\nEnter 2. Save the game\nEnter 3. Output the game status\nEnter 4. Exit the game\n",
 							out);
