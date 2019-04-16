@@ -35,6 +35,22 @@ public class Services {
 		}
 	}
 	
+	// Called to generate a random string for the filename
+	public static String generateString() {
+		final String ALPHABET = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+		int maxLength = 9;
+		Random random = new Random();
+		StringBuilder builder = new StringBuilder(maxLength);
+
+		// Looping 9 times, one for each char
+		for (int i = 0; i < maxLength; i++) {
+			builder.append(ALPHABET.charAt(random.nextInt(ALPHABET.length())));
+		}
+		// Generates a random String that has may have a quintillion different combinations
+		// (1/64^9)
+		return builder.toString();
+	}
+	
 	
 
 }

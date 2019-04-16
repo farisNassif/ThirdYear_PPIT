@@ -1,16 +1,18 @@
 package games;
 
 import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.InputStreamReader;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
-import java.io.BufferedWriter;
+import java.io.PrintWriter;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.io.PrintWriter;
 import java.sql.SQLException;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.Random;
 import java.util.Scanner;
 import java.util.concurrent.ThreadLocalRandom;
@@ -26,6 +28,7 @@ import services.Services;
  */
 public class War {
 
+	// Used to generate random string for the file
 	private final static int dealtCardsAmount = 13;
 	static int pointsOnTheBattlefield;
 	static int[] shuffledDeck = new int[156];
@@ -49,7 +52,7 @@ public class War {
 			throws ClassNotFoundException, IOException, SQLException {
 		console = new Scanner(System.in);
 
-		sendMessage("Would you like to: \nEnter 1. Start a new game\nEnter 2. Load the previously saved game\n", out);
+		sendMessage("Would you like to: \nEnter 1. Start a new game\nEnter 2. Load a previously saved game\n", out);
 		input = (String) in.readObject();
 		roundOption = Integer.parseInt(input);
 
@@ -83,46 +86,7 @@ public class War {
 				deal();
 			}
 		} else {
-			BufferedReader filep = null;
-			try {
-				filep = new BufferedReader(new InputStreamReader(new FileInputStream("gamestate.txt")));
-			} catch (FileNotFoundException e) {
-				System.out.println(e);
-			}
-			String line = "";
-			try {
-				if ((line = filep.readLine()) == null) {
-					System.out.printf("The file cannot be opened\n");
-				} else {
-
-					players = Integer.parseInt(line);
-					line = filep.readLine();
-					pointsOnTheBattlefield = Integer.parseInt(line);
-					line = filep.readLine();
-					roundNum = Integer.parseInt(line);
-					line = filep.readLine();
-					for (i = 0; i < players; i++) {
-						playerPoints[i] = Integer.parseInt(line);
-						line = filep.readLine();
-					}
-					for (i = 0; i < players; i++) {
-						for (j = 0; j < 13; j++) {
-							hands[i][j] = Integer.parseInt(line);
-							line = filep.readLine();
-						}
-					}
-				}
-			} catch (NumberFormatException e1) {
-				e1.printStackTrace();
-			} catch (IOException e1) {
-				e1.printStackTrace();
-			}
-			// Closes the file
-			try {
-				filep.close();
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
+			sendMessage(SQL.queryWarSaves(player), out);
 		}
 
 		while (roundNum > 0)// detects if the game is finished
@@ -137,9 +101,28 @@ public class War {
 				case 1:// next round
 					break;
 				case 2:
-					// Saves game
-					System.out.println(pointsOnTheBattlefield);
-					SQL.insertWarSave(player, pointsOnTheBattlefield, roundNum);
+					String fileName = (Services.generateString() + ".txt");
+					try (FileWriter fw = new FileWriter(fileName, false);
+							BufferedWriter bw = new BufferedWriter(fw);
+							PrintWriter write = new PrintWriter(bw)) {
+						write.println(players);
+						write.println(pointsOnTheBattlefield);
+						write.println(roundNum);
+						for (i = 0; i < players; i++) {
+							write.println(playerPoints[i]);
+						}
+						for (i = 0; i < players; i++) {
+							for (j = 0; j < 13; j++) {
+								write.println(hands[i][j]);
+							}
+						}
+						write.close();
+						DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss");
+						LocalDateTime now = LocalDateTime.now();
+						SQL.insertWarSave(player, fileName, now);
+					} catch (IOException e) {
+						System.out.println(e);
+					}
 					sendMessage(
 							"Would you like to: \nEnter 1. Complete the next round\nEnter 2. Save the game\nEnter 3. Output the game status\nEnter 4. Exit the game\n",
 							out);
@@ -158,8 +141,7 @@ public class War {
 					roundOption = Integer.parseInt(input);
 					break;
 				case 4:
-					// Exits the Game
-					System.exit(0);
+
 					break;
 				default:
 					sendMessage(
@@ -235,11 +217,12 @@ public class War {
 
 	}
 
-	public static void playRound(int playerTurn, ObjectInputStream in, ObjectOutputStream out) throws ClassNotFoundException, IOException {
+	public static void playRound(int playerTurn, ObjectInputStream in, ObjectOutputStream out)
+			throws ClassNotFoundException, IOException {
 		sendMessage("Player " + playerTurn + " enter any number when ready:\n", out);// used to conceal cards from
 		input = (String) in.readObject();
-		j = Integer.parseInt(input);																				// previous
-																						// player
+		j = Integer.parseInt(input); // previous
+		// player
 		for (j = 0; j < roundNum; j++) {
 			if (hands[(playerTurn - 1)][j] <= 10) {
 				sendMessage(j + "." + hands[(playerTurn - 1)][j], out);
@@ -253,10 +236,10 @@ public class War {
 				sendMessage(j + ".A", out);
 			}
 		}
-		sendMessage("Player " + playerTurn +  " enter the index number of the card you would like to play\n", out);
+		sendMessage("Player " + playerTurn + " enter the index number of the card you would like to play\n", out);
 		input = (String) in.readObject();
 		playerChoice = Integer.parseInt(input);
-		
+
 		playerCard[(playerTurn - 1)] = hands[(playerTurn - 1)][playerChoice];
 		playersCard[(playerTurn - 1)] = hands[(playerTurn - 1)][playerChoice];// must have 2 similar arrays incase one
 																				// gets set to 0 due to elimination
@@ -264,7 +247,7 @@ public class War {
 			hands[(playerTurn - 1)][j] = hands[(playerTurn - 1)][j + 1];// moves selected card to end of the array
 		}
 
-	} //
+	}
 
 	public static void deal() {
 		k = 0;

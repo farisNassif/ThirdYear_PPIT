@@ -5,6 +5,7 @@ import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.time.LocalDateTime;
 
 public class SQL {
 	private static String dbName = "GAME_USERS";
@@ -34,23 +35,17 @@ public class SQL {
 	}
 
 	private static void createTables() throws SQLException {
-		
-		sqlCreate = "CREATE TABLE IF NOT EXISTS " + "users" + "  "
-				+ "(user_id SMALLINT(6) NOT NULL AUTO_INCREMENT," +
-				   "name    VARCHAR(25)," + 
-				   "password VARCHAR(20),"
-				+ "PRIMARY KEY(user_id)) Engine=InnoDB";
+
+		sqlCreate = "CREATE TABLE IF NOT EXISTS " + "users" + "  " + "(user_id SMALLINT(6) NOT NULL AUTO_INCREMENT,"
+				+ "name    VARCHAR(25)," + "password VARCHAR(20)," + "PRIMARY KEY(user_id)) Engine=InnoDB";
 
 		statement = connection.createStatement();
 		statement.execute(sqlCreate);
-		
-		sqlCreate = "CREATE TABLE IF NOT EXISTS " + "war_saves" + "  "
-				+ "(save_id SMALLINT(6) NOT NULL AUTO_INCREMENT," +
-				   "player_name    VARCHAR(25)," + 
-				   "total_points SMALLINT(8)," +
-				   "round_num SMALLINT(8),"
+
+		sqlCreate = "CREATE TABLE IF NOT EXISTS " + "war_saves" + "  " + "(save_id SMALLINT(6) NOT NULL AUTO_INCREMENT,"
+				+ "player_name    VARCHAR(25)," + "file_name VARCHAR(20)," + "time_stamp    VARCHAR(40),"
 				+ "PRIMARY KEY(save_id)) Engine=InnoDB";
-		
+
 		statement = connection.createStatement();
 		statement.execute(sqlCreate);
 	}
@@ -63,18 +58,9 @@ public class SQL {
 		// Executes the statement
 		statement.executeUpdate(sql_stmt);
 		// Just notifying that this method was executed, can remove later
-		System.out.println("Required databse setup correctly");
+		System.out.println("<Required databse setup correctly>");
 	}
 
-	public static void insertWarSave(String name, int totalPoints, int roundNum) throws SQLException {
-		String insertUser = "INSERT INTO WAR_SAVES VALUES (0,'" + name + "', " + totalPoints + ", " + roundNum + ")";
-		System.out.println("pts " + totalPoints);
-		System.out.println("name " + name);
-		System.out.println("rndNm " + roundNum);
-		statement = connection.createStatement();
-		statement.execute(insertUser);
-	}
-	
 	public static void insertUser(String name, String password) throws SQLException {
 		String insertUser = "INSERT INTO USERS VALUES (0,'" + name + "', '" + password + "')";
 		statement = connection.createStatement();
@@ -90,6 +76,10 @@ public class SQL {
 		}
 	}
 
+	public static String getWarSave() {
+		return "";
+	}
+
 	public static boolean queryForUser(String name, String password) throws SQLException {
 		boolean found = false;
 		String query = "SELECT * from users WHERE name ='" + name + "' AND password = '" + password + "'";
@@ -102,10 +92,6 @@ public class SQL {
 
 			// If the name returned and the password returned match the name & pw
 			if ((userName.equals(name)) && (userPassword.equals(password))) {
-				// System.out.println("User ID = " + userId);
-				System.out.println("Name = " + userName);
-				System.out.println("password = " + userPassword);
-
 				found = true;
 			} else {
 				found = false;
@@ -113,4 +99,25 @@ public class SQL {
 		}
 		return found;
 	}
+
+	public static void insertWarSave(String name, String fileName, LocalDateTime timeStamp) throws SQLException {
+		String insertUser = "INSERT INTO WAR_SAVES VALUES (0,'" + name + "', '" + fileName + "', '" + timeStamp + "')";
+		statement = connection.createStatement();
+		statement.execute(insertUser);
+	}
+
+	public static String queryWarSaves(String playerName) throws SQLException {
+		String query = "SELECT * from war_saves WHERE player_name ='" + playerName + "'";
+		ResultSet rs = statement.executeQuery(query);
+		String returnedSaves = "";
+		while (rs.next()) {
+			int saveId = rs.getInt("save_id");
+			String playersName = rs.getString("player_name");
+			String timeStamp = rs.getString("time_stamp");
+			String currentSave = "Save ID: " + saveId + "| Name: " + playersName + "| Time Stamp: " + timeStamp + "\n";
+			returnedSaves += currentSave;
+		}
+		return returnedSaves;
+	}
+
 }
