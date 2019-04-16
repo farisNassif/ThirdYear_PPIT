@@ -119,5 +119,16 @@ public class SQL {
 		}
 		return returnedSaves;
 	}
+	
+	public static String loadSave(String gameTable, int saveId, String playerName) throws SQLException {
+		String query = "SELECT * from " + gameTable + " WHERE save_id =" + saveId + " AND player_name = '" + playerName +"'";
+		ResultSet rs = statement.executeQuery(query);
+		String returnedSaveFile = "";
+		while (rs.next()) {
+			String file = rs.getString("file_name");
+			returnedSaveFile = file;
+		}
+		return returnedSaveFile;	
+	}
 
 }

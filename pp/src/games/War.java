@@ -86,7 +86,62 @@ public class War {
 				deal();
 			}
 		} else {
-			sendMessage(SQL.queryWarSaves(player), out);
+			if (SQL.queryWarSaves(player) == "") {
+				sendMessage("Sorry, looks like you have no saves on your logged in account!", out);
+			} else {
+				sendMessage("Looks like you have saves on your logged in account!", out);
+				sendMessage(SQL.queryWarSaves(player), out);
+				sendMessage("Please Enter the ID of the save you wish to load", out);
+				input = (String) in.readObject();
+				int saveOption = Integer.parseInt(input);
+
+				String fileName = SQL.loadSave("war_saves", saveOption, player);
+				if (fileName == "") {
+					sendMessage("Save ID was not found for this player! Sorry", out);
+				} else {
+					sendMessage("Processing the save file ..", out);
+					BufferedReader filep = null;
+					try {
+						filep = new BufferedReader(new InputStreamReader(new FileInputStream(fileName)));
+					} catch (FileNotFoundException e) {
+						System.out.println(e);
+					}
+					String line = "";
+					try {
+						if ((line = filep.readLine()) == null) {
+							System.out.printf("The file cannot be opened\n");
+						} else {
+
+							players = Integer.parseInt(line);
+							line = filep.readLine();
+							pointsOnTheBattlefield = Integer.parseInt(line);
+							line = filep.readLine();
+							roundNum = Integer.parseInt(line);
+							line = filep.readLine();
+							for (i = 0; i < players; i++) {
+								playerPoints[i] = Integer.parseInt(line);
+								line = filep.readLine();
+							}
+							for (i = 0; i < players; i++) {
+								for (j = 0; j < 13; j++) {
+									hands[i][j] = Integer.parseInt(line);
+									line = filep.readLine();
+								}
+							}
+						}
+					} catch (NumberFormatException e1) {
+						e1.printStackTrace();
+					} catch (IOException e1) {
+						e1.printStackTrace();
+					}
+					// close(filep);//close the file
+					try {
+						filep.close();
+					} catch (IOException e) {
+						e.printStackTrace();
+					}
+				}
+			}
 		}
 
 		while (roundNum > 0)// detects if the game is finished
