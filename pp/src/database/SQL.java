@@ -9,6 +9,14 @@ import java.time.LocalDateTime;
 
 import services.Services;
 
+/**
+ * This class contains all relveant Scripts for Inserting/Querying the SQL
+ * database.
+ * 
+ * @author Faris Nassif
+ * @version 1.3
+ * @since 1.0
+ */
 public class SQL {
 	private static String dbName = "GAME_USERS";
 	private static String charSet = "utf8";
@@ -18,7 +26,13 @@ public class SQL {
 	private static Statement statement = null;
 	private static String sqlCreate = " ";
 
-	public static void main() throws Exception {
+	/**
+	 * Always called when the Server is put online, opens the connection, creates
+	 * the database/tables if they don't already exist.
+	 * 
+	 * @author Faris Nassif
+	 */
+	public static void onStartup() throws SQLException {
 		// Opens the connection
 		openConnection();
 		// Create database if not exists
@@ -27,6 +41,12 @@ public class SQL {
 		createTables();
 	}
 
+	/**
+	 * Opens the connection to the Database, this is the first method ran when
+	 * {@link SQL#onStartup()} is executed.
+	 * 
+	 * @author Faris Nassif
+	 */
 	private static void openConnection() {
 		DriverManager.setLoginTimeout(15);
 		try {
@@ -36,6 +56,29 @@ public class SQL {
 		}
 	}
 
+	/**
+	 * Creates the Database if it doesn't already exist, this is the second method
+	 * ran when {@link SQL#onStartup()} is executed.
+	 * 
+	 * @author Faris Nassif
+	 */
+	private static void createDatabase() throws SQLException {
+		// Statement that creates the database if it doesn't exist
+		String sql_stmt = "CREATE DATABASE IF NOT EXISTS " + dbName + " CHARACTER SET " + charSet + " COLLATE "
+				+ uniCode + ";";
+		statement = connection.createStatement();
+		// Executes the statement
+		statement.executeUpdate(sql_stmt);
+		// Just notifying that this method was executed, can remove later
+		System.out.println("<Required databse setup correctly>");
+	}
+
+	/**
+	 * Creates all the Tables within the Database, this is the thrid method ran when
+	 * {@link SQL#onStartup()} is executed.
+	 * 
+	 * @author Faris Nassif
+	 */
 	private static void createTables() throws SQLException {
 
 		sqlCreate = "CREATE TABLE IF NOT EXISTS " + "users" + "  " + "(user_id SMALLINT(6) NOT NULL AUTO_INCREMENT,"
@@ -52,23 +95,28 @@ public class SQL {
 		statement.execute(sqlCreate);
 	}
 
-	private static void createDatabase() throws SQLException {
-		// Statement that creates the database if it doesn't exist
-		String sql_stmt = "CREATE DATABASE IF NOT EXISTS " + dbName + " CHARACTER SET " + charSet + " COLLATE "
-				+ uniCode + ";";
-		statement = connection.createStatement();
-		// Executes the statement
-		statement.executeUpdate(sql_stmt);
-		// Just notifying that this method was executed, can remove later
-		System.out.println("<Required databse setup correctly>");
-	}
-
+	/**
+	 * Inserts a New user into the [Users] table and performs a SHA on their
+	 * password
+	 * 
+	 * @param name     - Name the user has entered
+	 * @param password - Password the user has entered
+	 * @throws SQLException
+	 */
 	public static void insertUser(String name, String password) throws SQLException {
 		String insertUser = "INSERT INTO USERS VALUES (0,'" + name + "', SHA1('" + password + "'))";
 		statement = connection.createStatement();
 		statement.execute(insertUser);
 	}
 
+	/**
+	 * Executed from {@link server.Server#run Server.run()} at the end when the
+	 * Server Connection is terminated
+	 * 
+	 * @param name     - Name the user has entered
+	 * @param password - Password the user has entered
+	 * @throws SQLException
+	 */
 	public static void closeConnection(String clientIP) {
 		try {
 			connection.close();
@@ -78,11 +126,15 @@ public class SQL {
 		}
 	}
 
-	public static String getWarSave() {
-		return "";
-	}
-
-	// When a user wants to Login
+	/**
+	 * Executed from {@link server.Server#run Server.run()}, Checks to see if the
+	 * Username + Password match an already Registered user when someone tries to
+	 * Login
+	 * 
+	 * @param name     - Name the user has entered
+	 * @param password - Password the user has entered
+	 * @throws SQLException
+	 */
 	public static boolean queryForUser(String name, String password) throws SQLException {
 		boolean found = false;
 		String query = "SELECT * from users WHERE name ='" + name + "' AND password = SHA1('" + password + "')";
@@ -122,16 +174,17 @@ public class SQL {
 		}
 		return returnedSaves;
 	}
-	
+
 	public static String loadSave(String gameTable, int saveId, String playerName) throws SQLException {
-		String query = "SELECT * from " + gameTable + " WHERE save_id =" + saveId + " AND player_name = '" + playerName +"'";
+		String query = "SELECT * from " + gameTable + " WHERE save_id =" + saveId + " AND player_name = '" + playerName
+				+ "'";
 		ResultSet rs = statement.executeQuery(query);
 		String returnedSaveFile = "";
 		while (rs.next()) {
 			String file = rs.getString("file_name");
 			returnedSaveFile = file;
 		}
-		return returnedSaveFile;	
+		return returnedSaveFile;
 	}
 
 }

@@ -65,7 +65,7 @@ public class Server extends Thread {
 
 			do {
 				// Initiates the SQL Connection
-				SQL.main();
+				SQL.onStartup();
 				// Welcome, Enter 1 for Login or 2 for Registration
 				sendMessage(Services.welcomeUser());
 				message = (String) in.readObject();
