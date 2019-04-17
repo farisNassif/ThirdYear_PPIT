@@ -1,5 +1,9 @@
 package services;
 
+import java.io.UnsupportedEncodingException;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
+import java.util.Formatter;
 import java.util.Random;
 import java.util.concurrent.ThreadLocalRandom;
 
@@ -49,6 +53,50 @@ public class Services {
 		// Generates a random String that has may have a quintillion different combinations
 		// (1/64^9)
 		return builder.toString();
+	}
+	
+	
+	/**
+	 * @author Faris Nassif
+	 * @param password 
+	 * @return Returns the sha'd Password
+	 */
+	public static String shaPassword(String password)
+	{
+	    String sha1 = "";
+	    try
+	    {
+	        MessageDigest crypt = MessageDigest.getInstance("SHA-1");
+	        crypt.reset();
+	        crypt.update(password.getBytes("UTF-8"));
+	        sha1 = byteToHex(crypt.digest());
+	    }
+	    catch(NoSuchAlgorithmException e)
+	    {
+	        e.printStackTrace();
+	    }
+	    catch(UnsupportedEncodingException e)
+	    {
+	        e.printStackTrace();
+	    }
+	    return sha1;
+	}
+	
+	/**
+	 * @author Faris Nassif
+	 * @param Accepts a hash after padding which should have returned an array of bytes
+	 * @return Returns the result of formatting the hash which should be the sha
+	 */
+	private static String byteToHex(final byte[] hash)
+	{
+	    Formatter formatter = new Formatter();
+	    for (byte b : hash)
+	    {
+	        formatter.format("%02x", b);
+	    }
+	    String result = formatter.toString();
+	    formatter.close();
+	    return result;
 	}
 	
 	

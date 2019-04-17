@@ -7,6 +7,8 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.time.LocalDateTime;
 
+import services.Services;
+
 public class SQL {
 	private static String dbName = "GAME_USERS";
 	private static String charSet = "utf8";
@@ -37,7 +39,7 @@ public class SQL {
 	private static void createTables() throws SQLException {
 
 		sqlCreate = "CREATE TABLE IF NOT EXISTS " + "users" + "  " + "(user_id SMALLINT(6) NOT NULL AUTO_INCREMENT,"
-				+ "name    VARCHAR(25)," + "password VARCHAR(20)," + "PRIMARY KEY(user_id)) Engine=InnoDB";
+				+ "name    VARCHAR(25)," + "password VARCHAR(64)," + "PRIMARY KEY(user_id)) Engine=InnoDB";
 
 		statement = connection.createStatement();
 		statement.execute(sqlCreate);
@@ -62,7 +64,7 @@ public class SQL {
 	}
 
 	public static void insertUser(String name, String password) throws SQLException {
-		String insertUser = "INSERT INTO USERS VALUES (0,'" + name + "', '" + password + "')";
+		String insertUser = "INSERT INTO USERS VALUES (0,'" + name + "', SHA1('" + password + "'))";
 		statement = connection.createStatement();
 		statement.execute(insertUser);
 	}
@@ -80,9 +82,10 @@ public class SQL {
 		return "";
 	}
 
+	// When a user wants to Login
 	public static boolean queryForUser(String name, String password) throws SQLException {
 		boolean found = false;
-		String query = "SELECT * from users WHERE name ='" + name + "' AND password = '" + password + "'";
+		String query = "SELECT * from users WHERE name ='" + name + "' AND password = SHA1('" + password + "')";
 		ResultSet rs = statement.executeQuery(query);
 		while (rs.next()) {
 			// userName is what was returned under the 'Name' column when the query was ran
@@ -91,7 +94,7 @@ public class SQL {
 			String userPassword = rs.getString("password");
 
 			// If the name returned and the password returned match the name & pw
-			if ((userName.equals(name)) && (userPassword.equals(password))) {
+			if ((userName.equals(name)) && (userPassword.equals(Services.shaPassword(password)))) {
 				found = true;
 			} else {
 				found = false;

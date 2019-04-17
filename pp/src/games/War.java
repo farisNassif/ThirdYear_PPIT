@@ -95,7 +95,9 @@ public class War {
 				input = (String) in.readObject();
 				int saveOption = Integer.parseInt(input);
 
+				// Loads war save file
 				String fileName = SQL.loadSave("war_saves", saveOption, player);
+
 				if (fileName == "") {
 					sendMessage("Save ID was not found for this player! Sorry", out);
 				} else {
