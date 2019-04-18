@@ -12,7 +12,7 @@ import services.Services;
  * @author Faris Nassif & Cormac Raftery <br>
  *         <br>
  *         The class <b>Client</b> contains all relevant Client code needed to
- *         communicate with the {@link server#Server()} class. The big majority
+ *         communicate with the {@link server.Server Server} class. The majority
  *         of code is found Server side.
  */
 public class ClientRunner {
@@ -51,6 +51,7 @@ public class ClientRunner {
 			out.flush();
 			in = new ObjectInputStream(requestSocket.getInputStream());
 
+			
 			// Will loop until the user opts to exit
 			do {
 				// Initial object read

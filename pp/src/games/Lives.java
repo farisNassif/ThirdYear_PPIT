@@ -43,16 +43,14 @@ public class Lives {
 				input = (String) in.readObject();
 				Integer.parseInt(input);
 				amtPlayers = Integer.parseInt(input);
-				
+
 				// Making sure there are only a minimum of 2 or max of 10
-				while (amtPlayers > 10 || amtPlayers < 2)
-				{
+				while (amtPlayers > 10 || amtPlayers < 2) {
 					sendMessage("Enter at least 2 players and at most 10", out);
 					input = (String) in.readObject();
 					Integer.parseInt(input);
 					amtPlayers = Integer.parseInt(input);
 				}
-				
 
 			} else if (option == 2) {
 				loadGame();

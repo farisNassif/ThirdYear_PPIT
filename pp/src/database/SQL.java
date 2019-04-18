@@ -146,7 +146,7 @@ public class SQL {
 			String userPassword = rs.getString("password");
 
 			// If the name returned and the password returned match the name & pw
-			if ((userName.equals(name)) && (userPassword.equals(Services.shaPassword(password)))) {
+			if ((userName.equalsIgnoreCase(name)) && (userPassword.equals(Services.shaPassword(password)))) {
 				found = true;
 			} else {
 				found = false;
