@@ -155,12 +155,31 @@ public class SQL {
 		return found;
 	}
 
+	/**
+	 * Executed from {@link games.War#runGame War.runGame()}, Inserts a new users
+	 * save of the Gamestate into the [WAR_SAVES] table
+	 * 
+	 * @param name      - Name of the current Logged in User
+	 * @param fileName  - The file that all the players hands will be saved in,
+	 *                  these are always unique files for each save
+	 * @param timeStamp - The exact time and date the save was created by the user
+	 * @throws SQLException
+	 */
 	public static void insertWarSave(String name, String fileName, LocalDateTime timeStamp) throws SQLException {
 		String insertUser = "INSERT INTO WAR_SAVES VALUES (0,'" + name + "', '" + fileName + "', '" + timeStamp + "')";
 		statement = connection.createStatement();
 		statement.execute(insertUser);
 	}
 
+	/**
+	 * Checks to see if there are saves in the databse from the specific Player,
+	 * returns them if there is.
+	 * 
+	 * @param playerName - Name of the current Logged in User
+	 * @return Returns all the saves that are found that were saved by the specific
+	 *         <b>playerName</b>
+	 * @throws SQLException
+	 */
 	public static String queryWarSaves(String playerName) throws SQLException {
 		String query = "SELECT * from war_saves WHERE player_name ='" + playerName + "'";
 		ResultSet rs = statement.executeQuery(query);
@@ -175,6 +194,16 @@ public class SQL {
 		return returnedSaves;
 	}
 
+	/**
+	 * Provides the user with the specific Save file they're looking for so they may
+	 * continue where they left off.
+	 * 
+	 * @param gameTable  - Whatever game the user is looking to load from
+	 * @param saveId     - Unique Save ID that they will use to reference the save
+	 * @param playerName - Name of the current Logged in User
+	 * @return Returns the save file the User has selected to Load in
+	 * @throws SQLException
+	 */
 	public static String loadSave(String gameTable, int saveId, String playerName) throws SQLException {
 		String query = "SELECT * from " + gameTable + " WHERE save_id =" + saveId + " AND player_name = '" + playerName
 				+ "'";
