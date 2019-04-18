@@ -52,7 +52,9 @@ public class War {
 			throws ClassNotFoundException, IOException, SQLException {
 		console = new Scanner(System.in);
 
-		sendMessage("Would you like to: \nEnter 1. Start a new game\nEnter 2. Load a previously saved game\n", out);
+		sendMessage(
+				"Would you like to: \nEnter 1. Start a new game\nEnter 2. Load a previously saved game\n*Any other key will Return you to the Game Menu",
+				out);
 		input = (String) in.readObject();
 		roundOption = Integer.parseInt(input);
 
@@ -85,7 +87,8 @@ public class War {
 				Services.shuffledeck(j, num, shuffledDeck);
 				deal();
 			}
-		} else {
+			warExecution(player, in, out);
+		} else if (roundOption == 2) {
 			if (SQL.queryWarSaves(player) == "") {
 				sendMessage("Sorry, looks like you have no saves on your logged in account!", out);
 			} else {
@@ -131,6 +134,7 @@ public class War {
 								}
 							}
 						}
+						warExecution(player, in, out);
 					} catch (NumberFormatException e1) {
 						e1.printStackTrace();
 					} catch (IOException e1) {
@@ -146,6 +150,10 @@ public class War {
 			}
 		}
 
+	}
+
+	public static void warExecution(String player, ObjectInputStream in, ObjectOutputStream out)
+			throws ClassNotFoundException, IOException, SQLException {
 		while (roundNum > 0)// detects if the game is finished
 		{
 			sendMessage(
@@ -173,8 +181,9 @@ public class War {
 								write.println(hands[i][j]);
 							}
 						}
+
 						write.close();
-						DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss");
+						DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss");
 						LocalDateTime now = LocalDateTime.now();
 						SQL.insertWarSave(player, fileName, now);
 					} catch (IOException e) {
@@ -198,7 +207,7 @@ public class War {
 					roundOption = Integer.parseInt(input);
 					break;
 				case 4:
-
+					runGame(player, in, out);
 					break;
 				default:
 					sendMessage(

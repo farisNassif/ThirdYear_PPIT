@@ -114,17 +114,17 @@ public class Server extends Thread {
 
 						// Executes what needs to execute once a user is Logged in
 						do {
-							sendMessage("Enter 1 to play [Lives], 2 for [War], 3 go [gtfo]");
+							sendMessage("Enter 1 to Play [Lives]\nEnter 2 to Play [War]\nEnter 3 to Play [gtfo]");
 							String gameChoice = (String) in.readObject();
 
 							if (gameChoice.equals("1")) {
 								games.Lives.runGame(in, out);
-							}
-							else if (gameChoice.equals("2")) {
-								games.War.runGame(playerLoginName,in, out);
+							} else if (gameChoice.equals("2")) {
+								games.War.runGame(playerLoginName, in, out);
 							}
 
-							sendMessage("Enter exit to logout or anything else to loop");
+							sendMessage("Are you sure you want to Exit <" + playerLoginName
+									+ ">?\nEnter <Exit> to Logout or any other Key to Continue");
 							message = (String) in.readObject();
 						} while (!message.equalsIgnoreCase("Exit"));
 					} else {
