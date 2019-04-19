@@ -16,12 +16,15 @@ import java.util.concurrent.ThreadLocalRandom;
  */
 public class Services {
 
+<<<<<<< HEAD
 	/**
 	 * Just a Welcome menu message for the user which instructs them on what to
 	 * press to navigate the program
 	 * 
 	 * @author Faris
 	 */
+=======
+>>>>>>> 49e411997643e6056dbd7d943e71d59967b17bea
 	public static String welcomeUser() {
 		return "\nWelcome to our Online Card Game Library\nPlease enter 1 to Register OR 2 to Login";
 	}
@@ -33,6 +36,7 @@ public class Services {
 	 * @author Faris
 	 */
 	public static String loopMessage() {
+<<<<<<< HEAD
 		return "Enter [X] to Terminate your connection to the Server\nEnter any other Key to Login/Register";
 	}
 
@@ -41,6 +45,11 @@ public class Services {
 	 * 
 	 * @author Faris
 	 */
+=======
+		return "Enter [X] to Terminate your connection to the Server\nEnter any other Key to Continue";
+	}
+
+>>>>>>> 49e411997643e6056dbd7d943e71d59967b17bea
 	public static String terminatingConnection(int clientID, String address) {
 		return "Terminating your Client Connection : ID - " + clientID + " : Address - " + address;
 	}

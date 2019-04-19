@@ -207,7 +207,11 @@ public class War {
 					roundOption = Integer.parseInt(input);
 					break;
 				case 4:
+<<<<<<< HEAD
 					// Exit
+=======
+					runGame(player, in, out);
+>>>>>>> 49e411997643e6056dbd7d943e71d59967b17bea
 					break;
 				default:
 					sendMessage(
