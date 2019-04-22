@@ -1,40 +1,45 @@
 package games;
 
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.util.Random;
+import java.util.Scanner;
 import java.util.Timer;
 import java.util.TimerTask;
 import java.util.concurrent.ThreadLocalRandom;
 
 public class Snap {
 	private String str = "";
+	public static String input = "";
+	static ObjectOutputStream out;
+	static ObjectInputStream in;
+	private Scanner console;
 	Timer timer = new Timer();
 	int lastcard = 0;
 	double amtPlayers;
 	int[][] hands = new int[10][53];
 	int[] winnerCards = new int[10];
 	int kcount = 0;
-	String input;
 	int cardCount = 0;
 	int cardsPlayedCount = 0;
 	int playernum = 0;
 	int deck[] = { 2, 2, 2, 2, 3, 3, 3, 3, 4, 4, 4, 4, 5, 5, 5, 5, 6, 6, 6, 6, 7, 7, 7, 7, 8, 8, 8, 8, 9, 9, 9, 9, 10,
 			10, 10, 10, 11, 11, 11, 11, 12, 12, 12, 12, 13, 13, 13, 13, 14, 14, 14, 14 };
-	ObjectInputStream in;
-	ObjectOutputStream out;
 
-	public Snap(ObjectInputStream in, ObjectOutputStream out) throws Exception {
-		this.in = in;
-		this.out = out;
+	// public void main(String[] args) throws Exception {
+	public Snap(ObjectInputStream in, ObjectOutputStream out) throws ClassNotFoundException, IOException {
+		
+		console = new Scanner(System.in);
 		int option = 0;
 		sendMessage(
-				"Press 1 if you would like to play with an automated timer for each flip\nPress 2 if you would like to flip the cards manually",
-				out);
+				"Enter 1 if you would like to play with an automated timer for each flip\nPress 2 if you would like to flip the cards manually", out);
 		input = (String) in.readObject();
 		option = Integer.parseInt(input);
-		sendMessage("How many players are there?(max 10)", out);
+		
+		sendMessage("Enter how many players are there?(max 10)",out);
 		input = (String) in.readObject();
 		amtPlayers = Integer.parseInt(input);
 
@@ -42,16 +47,20 @@ public class Snap {
 		deal();
 		if (option == 1) {
 
+			// String cont = console.nextLine();
 
 			while (cardsPlayedCount < 52) {
 				sendMessage(
-						"Press any key to continue, remember to have your finger over your number the players are from 0-"
-								+ ((int) amtPlayers - 1),
-						out);
+						"Enter any key to continue, remember to have your finger over your number the players are from 0-"
+								+ ((int) amtPlayers - 1), out);
 				input = (String) in.readObject();
 				char winner = 'a';
+				try {
 					winner = new Snap(in, out).getInput();
-
+				} catch (Exception e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
 				cardsPlayedCount += cardCount;
 				if (cardsPlayedCount < 54) {
 					sendMessage("Winner is player: " + winner, out);
@@ -60,14 +69,16 @@ public class Snap {
 				}
 			}
 		} else if (option == 2) {
-			int playerflip = -1;
+			int playerFlip = -1;
 			while (cardsPlayedCount < 51) {
-				while (playerflip != playernum) {
-					sendMessage("Player " + playernum + " Press " + playernum + " to flip a card!", out);
+				while (playerFlip != playernum) {
+					sendMessage("Player " + playernum + " Enter " + playernum + " to flip a card!",out);
 					input = (String) in.readObject();
-					playerflip = Integer.parseInt(input);
+					int playerFlipVar = Integer.parseInt(input);
+					playerFlip = playerFlipVar;
+
 				}
-				System.out.println(hands[playernum][kcount]);
+				sendMessage(hands[playernum][kcount], out);
 				int currentcard = hands[playernum][kcount];
 
 				if (playernum != 0) {
@@ -83,11 +94,11 @@ public class Snap {
 				}
 				if (currentcard == 0) {
 					sendMessage("That's all the cards! enter any key to view final scores!", out);
+					input = (String) in.readObject();
 					cardsPlayedCount = 52;
 				}
 				if (lastcard == currentcard) {
-					input = (String) in.readObject();
-					int winner = Integer.parseInt(input);
+					int winner = console.nextInt();
 					if (cardsPlayedCount < 51) {
 						sendMessage("Player " + winner + " wins " + cardCount + " cards!", out);
 						winnerCards[winner] += cardCount;
@@ -101,19 +112,41 @@ public class Snap {
 		}
 	}
 
+	public static void sendMessage(String msg, ObjectOutputStream out) {
+		try {
+			out.writeObject(msg);
+			out.flush();
+			System.out.println("To Client ==> " + msg);
+		} catch (IOException ioException) {
+			ioException.printStackTrace();
+		}
+	}
+	
+	public static void sendMessage(int msg, ObjectOutputStream out) {
+		try {
+			out.writeObject(msg);
+			out.flush();
+			System.out.println("To Client ==> " + msg);
+		} catch (IOException ioException) {
+			ioException.printStackTrace();
+		}
+	}
+
 	public char getInput() throws Exception {
 		timer.scheduleAtFixedRate(task, 1 * 1000, 1 * 500);
+
 		sendMessage("Here we go!", out);
-		input = (String) in.readObject();
-		str=input;
+		BufferedReader in = new BufferedReader(new InputStreamReader(System.in));
+		str = in.readLine();
 
 		return str.charAt(0);
+
 	}
 
 	TimerTask task = new TimerTask() {
 		public void run() {
 			if (str.equals("")) {
-				sendMessage(Integer.toString(hands[playernum][kcount]), out);
+				sendMessage(hands[playernum][kcount], out);
 				if (playernum != 0) {
 					lastcard = hands[playernum - 1][kcount];
 				} else if (playernum == 0 && kcount != 0) {
@@ -124,8 +157,16 @@ public class Snap {
 				playernum++;
 				if (currentcard == 0) {
 					cardsPlayedCount = 55;
-					System.out.println("That's all the cards! enter any key to view final scores!");
 					sendMessage("That's all the cards! enter any key to view final scores!", out);
+					try {
+						input = (String) in.readObject();
+					} catch (ClassNotFoundException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					} catch (IOException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
 					timer.cancel();
 				}
 				if (playernum >= amtPlayers) {
@@ -161,16 +202,6 @@ public class Snap {
 			int a = deck[index];
 			deck[index] = deck[i];
 			deck[i] = a;
-		}
-	}
-
-	public static void sendMessage(String msg, ObjectOutputStream out) {
-		try {
-			out.writeObject(msg);
-			out.flush();
-			System.out.println("To Client ==> " + msg);
-		} catch (IOException ioException) {
-			ioException.printStackTrace();
 		}
 	}
 }
