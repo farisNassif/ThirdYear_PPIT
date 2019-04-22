@@ -121,11 +121,11 @@ public class Server extends Thread {
 							String gameChoice = (String) in.readObject();
 
 							if (gameChoice.equals("1")) {
-								games.Lives.runGame(in, out);
+								new games.Lives(in, out);
 							} else if (gameChoice.equals("2")) {
 								games.War.runGame(playerLoginName, in, out);
 							} else if (gameChoice.equals("3")) {
-								//games.Snap.runGame(playerLoginName, in, out);
+								new games.Snap(in,out);
 							}
 
 

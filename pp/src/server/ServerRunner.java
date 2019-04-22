@@ -11,7 +11,7 @@ import java.net.Socket;
  */
 public class ServerRunner {
 	public static void main(String[] args) throws Exception {
-		ServerSocket m_ServerSocket = new ServerSocket(2004, 10);
+		ServerSocket m_ServerSocket = new ServerSocket(2007, 10);
 		int id = 0;
 		while (true) {
 			Socket clientSocket = m_ServerSocket.accept();

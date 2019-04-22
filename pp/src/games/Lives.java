@@ -10,24 +10,21 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.Random;
-import java.util.Scanner;
 import java.util.concurrent.ThreadLocalRandom;
 import java.io.ObjectInputStream;
 
 public class Lives {
-	static String input = "";
-	static int roundNum = 0;
-	static int playerLives[] = { 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 };
-	static int deck[] = { 2, 2, 2, 2, 3, 3, 3, 3, 4, 4, 4, 4, 5, 5, 5, 5, 6, 6, 6, 6, 7, 7, 7, 7, 8, 8, 8, 8, 9, 9, 9,
+	int roundNum = 0;
+	int playerLives[] = { 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 };
+	int deck[] = { 2, 2, 2, 2, 3, 3, 3, 3, 4, 4, 4, 4, 5, 5, 5, 5, 6, 6, 6, 6, 7, 7, 7, 7, 8, 8, 8, 8, 9, 9, 9,
 			9, 10, 10, 10, 10, 11, 11, 11, 11, 12, 12, 12, 12, 13, 13, 13, 13, 14, 14, 14, 14 };
-	static int amtPlayers;
-	static int[][] hands = new int[10][5];// first dimension is player number, second is their cards
-	static int lastcard = 0;
-	static boolean gameOver = false;
-
-	public static void runGame(ObjectInputStream in, ObjectOutputStream out)
+	int amtPlayers;
+	int[][] hands = new int[10][5];// first dimension is player number, second is their cards
+	int lastcard = 0;
+	boolean gameOver = false;
+	public Lives(ObjectInputStream in, ObjectOutputStream out)
 			throws ClassNotFoundException, IOException {
-
+		String input = "";
 		int option = 0;
 
 		do {
@@ -41,14 +38,11 @@ public class Lives {
 			if (option == 1) {
 				sendMessage("Enter how many players are there?(max 10)", out);
 				input = (String) in.readObject();
-				Integer.parseInt(input);
 				amtPlayers = Integer.parseInt(input);
-
 				// Making sure there are only a minimum of 2 or max of 10
 				while (amtPlayers > 10 || amtPlayers < 2) {
 					sendMessage("Enter at least 2 players and at most 10", out);
 					input = (String) in.readObject();
-					Integer.parseInt(input);
 					amtPlayers = Integer.parseInt(input);
 				}
 
@@ -72,6 +66,7 @@ public class Lives {
 			}
 			roundNum = 0;
 			checkLives();
+			System.out.println("Going into save game method");
 			saveGame(out);
 
 		}
@@ -87,7 +82,7 @@ public class Lives {
 		}
 	}
 
-	private static void loadGame() {
+	private void loadGame() {
 
 		BufferedReader filep = null;
 		try {
@@ -121,7 +116,7 @@ public class Lives {
 		}
 	}
 
-	private static void saveGame(ObjectOutputStream out) {
+	private void saveGame(ObjectOutputStream out) {
 		try (FileWriter fw = new FileWriter("gamestate.txt", false);
 				BufferedWriter bw = new BufferedWriter(fw);
 				PrintWriter outt = new PrintWriter(bw)) {
@@ -136,7 +131,7 @@ public class Lives {
 
 	}
 
-	private static void checkLives() {
+	private void checkLives() {
 		int leastLives = 5;
 		for (int i = 0; i < amtPlayers; i++) {
 			if (playerLives[i] < leastLives) {
@@ -148,7 +143,7 @@ public class Lives {
 		}
 	}
 
-	public static void deal() {
+	public void deal() {
 		int k = 0;
 		for (int i = 0; i < 5; i++) {
 			for (int j = 0; j < amtPlayers; j++) {
@@ -158,9 +153,10 @@ public class Lives {
 		}
 	}
 
-	public static void playRound(int playerTurn, ObjectOutputStream out, ObjectInputStream in)
+	public void playRound(int playerTurn, ObjectOutputStream out, ObjectInputStream in)
 			throws ClassNotFoundException, IOException {
 		// Used to conceal cards from other players
+		if(playerLives[playerTurn]>0) {
 		sendMessage("Player " + (playerTurn + 1) + " Enter something when you're ready to see your cards", out);
 		String input = (String) in.readObject();
 
@@ -179,32 +175,29 @@ public class Lives {
 		}
 		int playerChoice = 0;
 		sendMessage("Player " + (playerTurn + 1) + " Enter the index number of the card you would like to play\n", out);
+		input = (String) in.readObject();
 		do {
-
-			input = (String) in.readObject();
-			Integer.parseInt(input);
 			playerChoice = Integer.parseInt(input);
 
 			if (playerChoice > 4 - roundNum || playerChoice < -1) {
 				sendMessage("Please enter a valid input", out);
 			}
 		} while (playerChoice > 4 - roundNum || playerChoice < -1);
-
+		//facecard
 		if (hands[(playerTurn)][playerChoice] <= 10) {
-			sendMessage("Player " + (playerTurn + 1) + " played a " + hands[(playerTurn)][playerChoice], out);
+			sendMessage("\n\n\n\n\n\nPlayer " + (playerTurn + 1) + " played a " + hands[(playerTurn)][playerChoice], out);
 		} else if (hands[(playerTurn)][playerChoice] == 11) {
-			sendMessage("Player " + (playerTurn + 1) + " played a J", out);
+			sendMessage("\n\n\n\n\n\nPlayer " + (playerTurn + 1) + " played a J", out);
 		} else if (hands[(playerTurn)][playerChoice] == 12) {
-			sendMessage("Player " + (playerTurn + 1) + " played a Q", out);
+			sendMessage("\n\n\n\n\n\nPlayer " + (playerTurn + 1) + " played a Q", out);
 		} else if (hands[(playerTurn)][playerChoice] == 13) {
-			sendMessage("Player " + (playerTurn + 1) + " played a K", out);
+			sendMessage("\n\n\n\n\n\nPlayer " + (playerTurn + 1) + " played a K", out);
 		} else if (hands[(playerTurn)][playerChoice] == 14) {
-			sendMessage("Player " + (playerTurn + 1) + " played a A", out);
+			sendMessage("\n\n\n\n\n\nPlayer " + (playerTurn + 1) + " played a A", out);
 		}
 		if (hands[(playerTurn)][playerChoice] == lastcard) {
-			sendMessage("Player loses 1 life!", out);
 			if (playerTurn == 0) {
-				sendMessage("player " + (amtPlayers) + " loses life!", out);
+				sendMessage("player " + (amtPlayers) + " loses a life!", out);
 				playerLives[amtPlayers - 1]--;
 			} else {
 				sendMessage("player " + playerTurn + " loses life!", out);
@@ -215,9 +208,10 @@ public class Lives {
 		int a = hands[(playerTurn)][playerChoice];
 		hands[(playerTurn)][playerChoice] = hands[(playerTurn)][4 - roundNum];
 		hands[(playerTurn)][4 - roundNum] = a;
+		}
 	}
 
-	static void shuffledeck() {
+	void shuffledeck() {
 		Random rnd = ThreadLocalRandom.current();
 		for (int i = deck.length - 1; i > 0; i--) {
 			int index = rnd.nextInt(i + 1);
