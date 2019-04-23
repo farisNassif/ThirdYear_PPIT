@@ -93,6 +93,13 @@ public class SQL {
 
 		statement = connection.createStatement();
 		statement.execute(sqlCreate);
+		
+		sqlCreate = "CREATE TABLE IF NOT EXISTS " + "lives_saves" + "  " + "(save_id SMALLINT(6) NOT NULL AUTO_INCREMENT,"
+				+ "player_name    VARCHAR(25)," + "file_name VARCHAR(20)," + "time_stamp    VARCHAR(40),"
+				+ "PRIMARY KEY(save_id)) Engine=InnoDB";
+
+		statement = connection.createStatement();
+		statement.execute(sqlCreate);
 	}
 
 	/**
@@ -170,6 +177,22 @@ public class SQL {
 		statement = connection.createStatement();
 		statement.execute(insertUser);
 	}
+	
+	/**
+	 * Executed from {@link games.Lives#runGame Lives.runGame()}, Inserts a new users
+	 * save of the Gamestate into the [LIVES_SAVES] table
+	 * 
+	 * @param name      - Name of the current Logged in User
+	 * @param fileName  - The file that all the players hands will be saved in,
+	 *                  these are always unique files for each save
+	 * @param timeStamp - The exact time and date the save was created by the user
+	 * @throws SQLException
+	 */
+	public static void insertLivesSave(String name, String fileName, LocalDateTime timeStamp) throws SQLException {
+		String insertUser = "INSERT INTO LIVES_SAVES VALUES (0,'" + name + "', '" + fileName + "', '" + timeStamp + "')";
+		statement = connection.createStatement();
+		statement.execute(insertUser);
+	}
 
 	/**
 	 * Checks to see if there are saves in the databse from the specific Player,
@@ -182,6 +205,29 @@ public class SQL {
 	 */
 	public static String queryWarSaves(String playerName) throws SQLException {
 		String query = "SELECT * from war_saves WHERE player_name ='" + playerName + "'";
+		ResultSet rs = statement.executeQuery(query);
+		String returnedSaves = "";
+		while (rs.next()) {
+			int saveId = rs.getInt("save_id");
+			String playersName = rs.getString("player_name");
+			String timeStamp = rs.getString("time_stamp");
+			String currentSave = "Save ID: " + saveId + "| Name: " + playersName + "| Time Stamp: " + timeStamp + "\n";
+			returnedSaves += currentSave;
+		}
+		return returnedSaves;
+	}
+	
+	/**
+	 * Checks to see if there are saves in the databse from the specific Player,
+	 * returns them if there is.
+	 * 
+	 * @param playerName - Name of the current Logged in User
+	 * @return Returns all the saves that are found that were saved by the specific
+	 *         <b>playerName</b>
+	 * @throws SQLException
+	 */
+	public static String queryLivesSaves(String playerName) throws SQLException {
+		String query = "SELECT * from lives_saves WHERE player_name ='" + playerName + "'";
 		ResultSet rs = statement.executeQuery(query);
 		String returnedSaves = "";
 		while (rs.next()) {
