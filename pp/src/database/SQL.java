@@ -22,7 +22,8 @@ public class SQL {
 	private static String dbName = "GAME_USERS";
 	private static String charSet = "utf8";
 	private static String uniCode = "utf8_unicode_ci";
-	private final static String DATABASE_URL = "jdbc:mysql://localhost/GAME_USERS?autoReconnect=true&useSSL=false";
+	private static String STARTING_DATABASE_URL = "jdbc:mysql://localhost/";
+	private static final String FINAL_DATABASE_URL = "jdbc:mysql://localhost/GAME_USERS?autoReconnect=true&useSSL=false";
 	private static Connection connection = null;
 	private static Statement statement = null;
 	private static String sqlCreate = " ";
@@ -35,7 +36,7 @@ public class SQL {
 	 */
 	public static void onStartup() throws SQLException {
 		// Opens the connection
-		openConnection();
+		openConnection(STARTING_DATABASE_URL);
 		// Create database if not exists
 		createDatabase();
 		// Creates the tables if they don't already exist
@@ -48,10 +49,10 @@ public class SQL {
 	 * 
 	 * @author Faris Nassif
 	 */
-	private static void openConnection() {
+	private static void openConnection(String dbPath) {
 		DriverManager.setLoginTimeout(15);
 		try {
-			connection = DriverManager.getConnection(DATABASE_URL, "root", "");
+			connection = DriverManager.getConnection(dbPath, "root", "");
 		} catch (SQLException e) {
 			System.out.println("The following exception has occured: " + e.getMessage());
 		}
@@ -66,10 +67,14 @@ public class SQL {
 	private static void createDatabase() throws SQLException {
 		// Statement that creates the database if it doesn't exist
 		String sql_stmt = "CREATE DATABASE IF NOT EXISTS " + dbName + " CHARACTER SET " + charSet + " COLLATE "
-				+ uniCode + ";";
+				+ uniCode;
 		statement = connection.createStatement();
 		// Executes the statement
 		statement.executeUpdate(sql_stmt);
+		// No longer need old path now that database is connected
+		closeConnection();
+		// Now that the database has been connected, can change path to new database
+		openConnection(FINAL_DATABASE_URL);
 		// Just notifying that this method was executed, can remove later
 		System.out.println("<Required databse setup correctly>");
 	}
@@ -94,10 +99,10 @@ public class SQL {
 
 		statement = connection.createStatement();
 		statement.execute(sqlCreate);
-		
-		sqlCreate = "CREATE TABLE IF NOT EXISTS " + "lives_saves" + "  " + "(save_id SMALLINT(6) NOT NULL AUTO_INCREMENT,"
-				+ "player_name    VARCHAR(25)," + "file_name VARCHAR(20)," + "time_stamp    VARCHAR(40),"
-				+ "PRIMARY KEY(save_id)) Engine=InnoDB";
+
+		sqlCreate = "CREATE TABLE IF NOT EXISTS " + "lives_saves" + "  "
+				+ "(save_id SMALLINT(6) NOT NULL AUTO_INCREMENT," + "player_name    VARCHAR(25),"
+				+ "file_name VARCHAR(20)," + "time_stamp    VARCHAR(40)," + "PRIMARY KEY(save_id)) Engine=InnoDB";
 
 		statement = connection.createStatement();
 		statement.execute(sqlCreate);
@@ -129,6 +134,14 @@ public class SQL {
 		try {
 			connection.close();
 			System.out.println("Closing SQL Connection for client " + clientIP + " ...");
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+	}
+
+	public static void closeConnection() {
+		try {
+			connection.close();
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
@@ -178,10 +191,10 @@ public class SQL {
 		statement = connection.createStatement();
 		statement.execute(insertUser);
 	}
-	
+
 	/**
-	 * Executed from {@link games.Lives#runGame Lives.runGame()}, Inserts a new users
-	 * save of the Gamestate into the [LIVES_SAVES] table
+	 * Executed from {@link games.Lives#runGame Lives.runGame()}, Inserts a new
+	 * users save of the Gamestate into the [LIVES_SAVES] table
 	 * 
 	 * @param name      - Name of the current Logged in User
 	 * @param fileName  - The file that all the players hands will be saved in,
@@ -190,7 +203,8 @@ public class SQL {
 	 * @throws SQLException
 	 */
 	public static void insertLivesSave(String name, String fileName, LocalDateTime timeStamp) throws SQLException {
-		String insertUser = "INSERT INTO LIVES_SAVES VALUES (0,'" + name + "', '" + fileName + "', '" + timeStamp + "')";
+		String insertUser = "INSERT INTO LIVES_SAVES VALUES (0,'" + name + "', '" + fileName + "', '" + timeStamp
+				+ "')";
 		statement = connection.createStatement();
 		statement.execute(insertUser);
 	}
@@ -217,7 +231,7 @@ public class SQL {
 		}
 		return returnedSaves;
 	}
-	
+
 	/**
 	 * Checks to see if there are saves in the databse from the specific Player,
 	 * returns them if there is.

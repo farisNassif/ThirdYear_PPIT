@@ -156,64 +156,66 @@ public class War {
 					out);
 			input = (String) in.readObject();
 			roundOption = Integer.parseInt(input);
-			do {
-				switch (roundOption) {
-				case 1:// next round
-					break;
-				case 2:
-					String fileName = (Services.generateString() + ".txt");
-					try (FileWriter fw = new FileWriter(fileName, false);
-							BufferedWriter bw = new BufferedWriter(fw);
-							PrintWriter write = new PrintWriter(bw)) {
-						write.println(players);
-						write.println(pointsOnTheBattlefield);
-						write.println(roundNum);
-						for (i = 0; i < players; i++) {
-							write.println(playerPoints[i]);
+			switch (roundOption) {
+			case 1:// next round
+				break;
+			case 2:
+				String fileName = (Services.generateString() + ".txt");
+				try (FileWriter fw = new FileWriter(fileName, false);
+						BufferedWriter bw = new BufferedWriter(fw);
+						PrintWriter write = new PrintWriter(bw)) {
+					write.println(players);
+					write.println(pointsOnTheBattlefield);
+					write.println(roundNum);
+					for (i = 0; i < players; i++) {
+						write.println(playerPoints[i]);
+					}
+					for (i = 0; i < players; i++) {
+						for (j = 0; j < 13; j++) {
+							write.println(hands[i][j]);
 						}
-						for (i = 0; i < players; i++) {
-							for (j = 0; j < 13; j++) {
-								write.println(hands[i][j]);
-							}
-						}
-
-						write.close();
-						DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss");
-						LocalDateTime now = LocalDateTime.now();
-						SQL.insertWarSave(player, fileName, now);
-					} catch (IOException e) {
-						System.out.println(e);
 					}
 					sendMessage(
-							"Would you like to: \nEnter 1. Complete the next round\nEnter 2. Save the game\nEnter 3. Output the game status\nEnter 4. Exit the game\n",
+							"Saving the Gamestate ...\n"
+							+ "Game Saved!\n",
 							out);
-					input = (String) in.readObject();
-					roundOption = Integer.parseInt(input);
-					break;
-				case 3:
-					// Show Score
-					for (i = 1; i <= players; i++) {
-						sendMessage("Player " + i + " has " + playerPoints[i - 1] + " points", out);
-					}
-					sendMessage(
-							"Would you like to: \nEnter 1. Complete the next round\nEnter 2. Save the game\nEnter 3. Output the game status\nEnter 4. Exit the game\n",
-							out);
-					input = (String) in.readObject();
-					roundOption = Integer.parseInt(input);
-					break;
-				case 4:
-					// Exit
-					roundOption = 4;
-					break;
-				default:
-					sendMessage(
-							"Would you like to: \nEnter 1. Complete the next round\nEnter 2. Save the game\nEnter 3. Output the game status\nEnter 4. Exit the game\n",
-							out);
-					input = (String) in.readObject();
-					roundOption = Integer.parseInt(input);
-					break;
+					write.close();
+					DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss");
+					LocalDateTime now = LocalDateTime.now();
+					SQL.insertWarSave(player, fileName, now);
+				} catch (IOException e) {
+					System.out.println(e);
 				}
-			} while (roundOption != 4);
+				sendMessage(
+						"Would you like to: \nEnter 1. Complete the next round\nEnter 2. Save the game\nEnter 3. Output the game status\nEnter 4. Exit the game\n",
+						out);
+				input = (String) in.readObject();
+				roundOption = Integer.parseInt(input);
+				break;
+			case 3:
+				// Show Score
+				for (i = 1; i <= players; i++) {
+					sendMessage("Player " + i + " has " + playerPoints[i - 1] + " points", out);
+				}
+				sendMessage(
+						"Would you like to: \nEnter 1. Complete the next round\nEnter 2. Save the game\nEnter 3. Output the game status\nEnter 4. Exit the game\n",
+						out);
+				input = (String) in.readObject();
+				roundOption = Integer.parseInt(input);
+				break;
+			case 4:
+				// Exit
+				roundOption = 4;
+				break;
+			default:
+				sendMessage(
+						"Would you like to: \nEnter 1. Complete the next round\nEnter 2. Save the game\nEnter 3. Output the game status\nEnter 4. Exit the game\n",
+						out);
+				input = (String) in.readObject();
+				roundOption = Integer.parseInt(input);
+				break;
+			}
+
 			if (roundOption != 4) {
 				for (i = 1; i <= players; i++)// each player selects card
 				{
