@@ -34,6 +34,7 @@ public class Lives {
 	public Lives(String player, ObjectInputStream in, ObjectOutputStream out)
 			throws ClassNotFoundException, IOException, SQLException {
 		String input = "";
+		int exitGame = 0;
 		int option = 0;
 
 		do {
@@ -59,26 +60,35 @@ public class Lives {
 				loadGame(player, out, in);
 			}
 		} while (option != 1 && option != 2);
-		while (!gameOver && amtPlayers > 0) {
-			shuffledeck();
-			deal();
-			while (roundNum < 5) {
-				for (int i = 0; i < amtPlayers; i++)// each player selects card
-				{
-					playRound(i, out, in);
+		if (amtPlayers > 0) {
+			while (!gameOver && exitGame == 0) {
+				shuffledeck();
+				deal();
+				while (roundNum < 5) {
+					for (int i = 0; i < amtPlayers; i++)// each player selects card
+					{
+						playRound(i, out, in);
+					}
+					roundNum++;
 				}
-				roundNum++;
-			}
-			sendMessage("At the end of the round the lives are: ", out);
-			for (int i = 0; i < amtPlayers; i++) {
-				sendMessage("player " + (i + 1) + " has " + playerLives[i] + " lives ", out);
-			}
-			roundNum = 0;
-			checkLives();
-			System.out.println("Going into save game method");
-			saveGame(player, out);
+				sendMessage("At the end of the round the lives are: ", out);
+				for (int i = 0; i < amtPlayers; i++) {
+					sendMessage("player " + (i + 1) + " has " + playerLives[i] + " lives ", out);
+				}
+				roundNum = 0;
+				checkLives();
+				saveGame(player, out);
+				// Checking to see if they want to quit after the round
 
+
+					sendMessage("Enter 1 to Exit or 0 to Continue", out);
+					input = (String) in.readObject();
+					exitGame = Integer.parseInt(input);
+				
+
+			}
 		}
+		sendMessage("Exiting Lives ...\n", out);
 	}
 
 	public static void sendMessage(String msg, ObjectOutputStream out) {

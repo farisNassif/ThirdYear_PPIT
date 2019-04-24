@@ -51,8 +51,8 @@ public class Server extends Thread {
 
 	/**
 	 * Runs the client thread through the server, allowing them to navigate the
-	 * Program. The bulk of code contained within {@link server#run() run()} is wrapped
-	 * within other class methods such as {@link SQL#openConnection()} |
+	 * Program. The bulk of code contained within {@link server#run() run()} is
+	 * wrapped within other class methods such as {@link SQL#openConnection()} |
 	 * {@link Services#terminatingConnection(int clientID, String address)} .
 	 */
 	public void run() {
@@ -70,7 +70,6 @@ public class Server extends Thread {
 				sendMessage(Services.welcomeUser());
 				message = (String) in.readObject();
 
-				
 				// If the user wants to register
 				if (message.equalsIgnoreCase("1")) {
 					sendMessage("You have chosen to Register");
@@ -78,7 +77,6 @@ public class Server extends Thread {
 					sendMessage("Please enter your Player Name");
 					playerName = (String) in.readObject();
 
-					
 					sendMessage("Please enter your Password (Least 6 Characters)");
 					playerPassword = (String) in.readObject();
 
@@ -116,23 +114,20 @@ public class Server extends Thread {
 
 						// Executes what needs to execute once a user is Logged in
 						do {
-							sendMessage("Enter 1 to Play [Lives]\nEnter 2 to Play [War]\nEnter 3 to Play [Snap]");
+							sendMessage(
+									"Enter 1 to Play [Lives]\nEnter 2 to Play [War]\nEnter 3 to Play [Snap]\nEnter anything else to Logout");
 
 							String gameChoice = (String) in.readObject();
 
 							if (gameChoice.equals("1")) {
-								new games.Lives(playerLoginName,in, out);
+								new games.Lives(playerLoginName, in, out);
 							} else if (gameChoice.equals("2")) {
 								new games.War(playerLoginName, in, out);
 							} else if (gameChoice.equals("3")) {
-								new games.Snap(in,out);
+								new games.Snap(in, out);
 							}
 
-
-							sendMessage("Are you sure you want to Logout <" + playerLoginName);
-
-							sendMessage("Are you sure you want to Exit <" + playerLoginName
-
+							sendMessage("Are you sure you want to Logout <" + playerLoginName
 									+ ">?\nEnter <Exit> to Logout or any other Key to Continue");
 							message = (String) in.readObject();
 						} while (!message.equalsIgnoreCase("Exit"));
