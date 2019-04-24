@@ -123,7 +123,7 @@ public class Server extends Thread {
 							if (gameChoice.equals("1")) {
 								new games.Lives(playerLoginName,in, out);
 							} else if (gameChoice.equals("2")) {
-								games.War.runGame(playerLoginName, in, out);
+								new games.War(playerLoginName, in, out);
 							} else if (gameChoice.equals("3")) {
 								new games.Snap(in,out);
 							}

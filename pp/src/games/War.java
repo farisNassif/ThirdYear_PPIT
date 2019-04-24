@@ -13,9 +13,6 @@ import java.io.IOException;
 import java.sql.SQLException;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.Random;
-import java.util.Scanner;
-import java.util.concurrent.ThreadLocalRandom;
 
 import database.SQL;
 import services.Services;
@@ -29,28 +26,26 @@ import services.Services;
 public class War {
 
 	// Used to generate random string for the file
-	private final static int dealtCardsAmount = 13;
-	static int pointsOnTheBattlefield;
-	static int[] shuffledDeck = new int[156];
-	static int num;
-	static int[][] hands = new int[10][13];// first dimension is player number, second is their cards
-	static int[] playerPoints = new int[10];
-	static int i, j, k;
-	static int players, playerTurn;
-	static int playerChoice;
-	static int[] playerCard = new int[10];
-	static int[] playersCard = new int[10];
-	static int roundNum = 13;
-	static int totalRoundPoints;
-	static int largest, largestPosition;
-	static int roundOption;
-	static char facecard;
-	static String input = "";
-	private static Scanner console;
+	private final int dealtCardsAmount = 13;
+	int pointsOnTheBattlefield;
+	int[] shuffledDeck = new int[156];
+	int num;
+	int[][] hands = new int[10][13];// first dimension is player number, second is their cards
+	int[] playerPoints = new int[10];
+	int i, j, k;
+	int players, playerTurn;
+	int playerChoice;
+	int[] playerCard = new int[10];
+	int[] playersCard = new int[10];
+	int roundNum = 13;
+	int totalRoundPoints;
+	int largest, largestPosition;
+	int roundOption;
+	char facecard;
+	String input = "";
 
-	public static void runGame(String player, ObjectInputStream in, ObjectOutputStream out)
+	public War(String player, ObjectInputStream in, ObjectOutputStream out)
 			throws ClassNotFoundException, IOException, SQLException {
-		console = new Scanner(System.in);
 
 		sendMessage(
 				"Would you like to: \nEnter 1. Start a new game\nEnter 2. Load a previously saved game\n*Any other key will Return you to the Game Menu",
@@ -152,9 +147,9 @@ public class War {
 
 	}
 
-	public static void warExecution(String player, ObjectInputStream in, ObjectOutputStream out)
+	public void warExecution(String player, ObjectInputStream in, ObjectOutputStream out)
 			throws ClassNotFoundException, IOException, SQLException {
-		while (roundNum > 0)// detects if the game is finished
+		while (roundNum > 0 && roundOption != 4)// detects if the game is finished
 		{
 			sendMessage(
 					"Would you like to: \nEnter 1. Complete the next round\nEnter 2. Save the game\nEnter 3. Output the game status\nEnter 4. Exit the game\n",
@@ -208,7 +203,7 @@ public class War {
 					break;
 				case 4:
 					// Exit
-					runGame(player, in, out);
+					roundOption = 4;
 					break;
 				default:
 					sendMessage(
@@ -219,34 +214,36 @@ public class War {
 					break;
 				}
 			} while (roundOption != 4);
-			for (i = 1; i <= players; i++)// each player selects card
-			{
-				playRound(i, in, out);
-			}
-			roundNum--;
-			// Determines the highest unique card value
-			whowins(in, out);
-			totalRoundPoints = 0;
-			// Print out players played card
-			for (i = 1; i <= players; i++) {
-				// Handles cards 2-10
-				if (playersCard[i - 1] <= 10) {
-					sendMessage("Player " + i + " played: " + playersCard[i - 1] + "\n", out);
-					// Handles cards J - A
-				} else if (playersCard[i - 1] == 11) {
-					sendMessage("Player " + i + "  played: J\n", out);
-				} else if (playersCard[i - 1] == 12) {
-					sendMessage("Player " + i + "  played: Q\n", out);
-				} else if (playersCard[i - 1] == 13) {
-					sendMessage("Player " + i + "  played: K\n", out);
-				} else if (playersCard[i - 1] == 14) {
-					sendMessage("Player " + i + "  played: A\n", out);
+			if (roundOption != 4) {
+				for (i = 1; i <= players; i++)// each player selects card
+				{
+					playRound(i, in, out);
+				}
+				roundNum--;
+				// Determines the highest unique card value
+				whowins(in, out);
+				totalRoundPoints = 0;
+				// Print out players played card
+				for (i = 1; i <= players; i++) {
+					// Handles cards 2-10
+					if (playersCard[i - 1] <= 10) {
+						sendMessage("Player " + i + " played: " + playersCard[i - 1] + "\n", out);
+						// Handles cards J - A
+					} else if (playersCard[i - 1] == 11) {
+						sendMessage("Player " + i + "  played: J\n", out);
+					} else if (playersCard[i - 1] == 12) {
+						sendMessage("Player " + i + "  played: Q\n", out);
+					} else if (playersCard[i - 1] == 13) {
+						sendMessage("Player " + i + "  played: K\n", out);
+					} else if (playersCard[i - 1] == 14) {
+						sendMessage("Player " + i + "  played: A\n", out);
+					}
 				}
 			}
 		}
 	}
 
-	public static void whowins(ObjectInputStream in, ObjectOutputStream out) {
+	public void whowins(ObjectInputStream in, ObjectOutputStream out) {
 		for (i = 0; i < players; i++) {
 			totalRoundPoints += playerCard[i];// totals card values
 		}
@@ -284,7 +281,7 @@ public class War {
 
 	}
 
-	public static void playRound(int playerTurn, ObjectInputStream in, ObjectOutputStream out)
+	public void playRound(int playerTurn, ObjectInputStream in, ObjectOutputStream out)
 			throws ClassNotFoundException, IOException {
 		sendMessage("Player " + playerTurn + " enter any number when ready:\n", out);// used to conceal cards from
 		input = (String) in.readObject();
@@ -316,7 +313,7 @@ public class War {
 
 	}
 
-	public static void deal() {
+	public void deal() {
 		k = 0;
 		for (i = 0; i < dealtCardsAmount; i++) {
 			for (j = 0; j < players; j++) {
