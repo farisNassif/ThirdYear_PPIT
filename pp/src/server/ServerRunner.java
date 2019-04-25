@@ -7,7 +7,8 @@ import java.net.Socket;
  *
  * <b>ServerRunner</b> implements a <a href=
  * "https://docs.oracle.com/javase/7/docs/api/java/net/ServerSocket.html"><i>ServerSocket</i></a>
- * that listens for a Client Connection. This class will run the code within {@link Server}
+ * that listens for a Client Connection. This class will run the code within
+ * {@link Server}
  */
 public class ServerRunner {
 	public static void main(String[] args) throws Exception {

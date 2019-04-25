@@ -33,6 +33,7 @@ public class SQL {
 	 * the database/tables if they don't already exist.
 	 * 
 	 * @author Faris Nassif
+	 * @throws SQLException Throws SQLException
 	 */
 	public static void onStartup() throws SQLException {
 		// Opens the connection
@@ -114,7 +115,8 @@ public class SQL {
 	 * 
 	 * @param name     - Name the user has entered
 	 * @param password - Password the user has entered
-	 * @throws SQLException
+	 * @throws SQLException throws SQLException
+	 * @author Faris Nassif
 	 */
 	public static void insertUser(String name, String password) throws SQLException {
 		String insertUser = "INSERT INTO USERS VALUES (0,'" + name + "', SHA1('" + password + "'))";
@@ -125,10 +127,8 @@ public class SQL {
 	/**
 	 * Executed from {@link server.Server#run Server.run()} at the end when the
 	 * Server Connection is terminated
-	 * 
-	 * @param name     - Name the user has entered
-	 * @param password - Password the user has entered
-	 * @throws SQLException
+	 * @param clientIP IP of the current Client
+	 * @author Faris Nassif
 	 */
 	public static void closeConnection(String clientIP) {
 		try {
@@ -154,7 +154,9 @@ public class SQL {
 	 * 
 	 * @param name     - Name the user has entered
 	 * @param password - Password the user has entered
-	 * @throws SQLException
+	 * @throws SQLException throws SQLException 
+	 * @return found Returns a boolean if the user was found or not
+	 * @author Faris Nassif
 	 */
 	public static boolean queryForUser(String name, String password) throws SQLException {
 		boolean found = false;
@@ -177,14 +179,15 @@ public class SQL {
 	}
 
 	/**
-	 * Executed from {@link games.War#runGame War.runGame()}, Inserts a new users
+	 * Executed from the runGame() method, Inserts a new users
 	 * save of the Gamestate into the [WAR_SAVES] table
 	 * 
 	 * @param name      - Name of the current Logged in User
 	 * @param fileName  - The file that all the players hands will be saved in,
 	 *                  these are always unique files for each save
 	 * @param timeStamp - The exact time and date the save was created by the user
-	 * @throws SQLException
+	 * @throws SQLException throws SQLException
+	 * @author Faris Nassif 
 	 */
 	public static void insertWarSave(String name, String fileName, LocalDateTime timeStamp) throws SQLException {
 		String insertUser = "INSERT INTO WAR_SAVES VALUES (0,'" + name + "', '" + fileName + "', '" + timeStamp + "')";
@@ -193,14 +196,15 @@ public class SQL {
 	}
 
 	/**
-	 * Executed from {@link games.Lives#runGame Lives.runGame()}, Inserts a new
+	 * Executed from the runGame() method, Inserts a new
 	 * users save of the Gamestate into the [LIVES_SAVES] table
 	 * 
 	 * @param name      - Name of the current Logged in User
 	 * @param fileName  - The file that all the players hands will be saved in,
 	 *                  these are always unique files for each save
 	 * @param timeStamp - The exact time and date the save was created by the user
-	 * @throws SQLException
+	 * @throws SQLException throws SQLException
+	 * @author Faris Nassif
 	 */
 	public static void insertLivesSave(String name, String fileName, LocalDateTime timeStamp) throws SQLException {
 		String insertUser = "INSERT INTO LIVES_SAVES VALUES (0,'" + name + "', '" + fileName + "', '" + timeStamp
@@ -216,7 +220,8 @@ public class SQL {
 	 * @param playerName - Name of the current Logged in User
 	 * @return Returns all the saves that are found that were saved by the specific
 	 *         <b>playerName</b>
-	 * @throws SQLException
+	 * @throws SQLException throws SQLException
+	 * @author Faris Nassif
 	 */
 	public static String queryWarSaves(String playerName) throws SQLException {
 		String query = "SELECT * from war_saves WHERE player_name ='" + playerName + "'";
@@ -238,8 +243,9 @@ public class SQL {
 	 * 
 	 * @param playerName - Name of the current Logged in User
 	 * @return Returns all the saves that are found that were saved by the specific
-	 *         <b>playerName</b>
-	 * @throws SQLException
+	 *         <b>playerName</b> 
+	 * @throws SQLException throws SQLException
+	 * @author Faris Nassif
 	 */
 	public static String queryLivesSaves(String playerName) throws SQLException {
 		String query = "SELECT * from lives_saves WHERE player_name ='" + playerName + "'";
@@ -263,7 +269,8 @@ public class SQL {
 	 * @param saveId     - Unique Save ID that they will use to reference the save
 	 * @param playerName - Name of the current Logged in User
 	 * @return Returns the save file the User has selected to Load in
-	 * @throws SQLException
+	 * @throws SQLException throws SQLException
+	 * @author Faris Nassif
 	 */
 	public static String loadSave(String gameTable, int saveId, String playerName) throws SQLException {
 		String query = "SELECT * from " + gameTable + " WHERE save_id =" + saveId + " AND player_name = '" + playerName

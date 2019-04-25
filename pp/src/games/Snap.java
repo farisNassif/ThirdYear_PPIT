@@ -7,6 +7,13 @@ import java.util.Timer;
 import java.util.TimerTask;
 import java.util.concurrent.ThreadLocalRandom;
 
+/**
+ * Runs the Game Snap
+ * 
+ * @author Cormac Raftery
+ * @version 1.2
+ * @since 1.0
+ */
 public class Snap {
 	private String str = "";
 	public static String input = "";

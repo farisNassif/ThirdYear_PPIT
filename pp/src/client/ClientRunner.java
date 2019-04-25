@@ -9,7 +9,7 @@ import services.Services;
 
 /**
  * @version 1.2
- * @author Faris Nassif & Cormac Raftery <br>
+ * @author Faris Nassif and Cormac Raftery <br>
  *         <br>
  *         The class <b>Client</b> contains all relevant Client code needed to
  *         communicate with the {@link server.Server Server} class. The majority
@@ -27,7 +27,7 @@ public class ClientRunner {
 	 * Executes the {@link #run()} method allowing connection to the Specified
 	 * Server
 	 * 
-	 * @param args
+	 * @param args Arguments
 	 */
 	public static void main(String args[]) {
 		ClientRunner client = new ClientRunner();

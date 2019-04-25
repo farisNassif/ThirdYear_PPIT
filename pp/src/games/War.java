@@ -18,10 +18,11 @@ import database.SQL;
 import services.Services;
 
 /**
- * @version 1.1
- * @author Cormac Raftery & Faris Nassif <br>
- *         <br>
- *         War card game
+ * Runs the Game War
+ * 
+ * @author Cormac Raftery
+ * @version 1.2
+ * @since 1.0
  */
 public class War {
 

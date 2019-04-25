@@ -20,6 +20,13 @@ import services.Services;
 
 import java.io.ObjectInputStream;
 
+/**
+ * Runs the Game Lives
+ * 
+ * @author Cormac Raftery
+ * @version 1.2
+ * @since 1.0
+ */
 public class Lives {
 	int roundNum = 0;
 	static String input = "";
@@ -80,11 +87,9 @@ public class Lives {
 				saveGame(player, out);
 				// Checking to see if they want to quit after the round
 
-
-					sendMessage("Enter 1 to Exit or 0 to Continue", out);
-					input = (String) in.readObject();
-					exitGame = Integer.parseInt(input);
-				
+				sendMessage("Enter 1 to Exit or 0 to Continue", out);
+				input = (String) in.readObject();
+				exitGame = Integer.parseInt(input);
 
 			}
 		}

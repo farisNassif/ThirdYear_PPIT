@@ -19,7 +19,7 @@ public class Services {
 	/**
 	 * Just a Welcome menu message for the user which instructs them on what to
 	 * press to navigate the program
-	 * 
+	 * @return Returns a Welcome message 
 	 * @author Faris
 	 */
 	public static String welcomeUser() {
@@ -29,7 +29,7 @@ public class Services {
 	/**
 	 * Just a menu message for the user which instructs them on what to press to
 	 * navigate the program
-	 * 
+	 * @return Returns an information message for the user
 	 * @author Faris
 	 */
 	public static String loopMessage() {
@@ -38,7 +38,9 @@ public class Services {
 
 	/**
 	 * Message that alerts the client of their connection termination to the Server
-	 * 
+	 * @param clientID ID of the current Client
+	 * @param address IP Address of the current Client
+	 * @return Returns an infomration message for the client
 	 * @author Faris
 	 */
 
@@ -49,9 +51,9 @@ public class Services {
 	/**
 	 * Shuffles a deck of cards, can be implemented for any card game
 	 * 
-	 * @param j
-	 * @param num
-	 * @param shuffledDeck
+	 * @param j J
+	 * @param num Number
+	 * @param shuffledDeck Deck that is to be shuffled
 	 */
 	public static void shuffledeck(int j, int num, int shuffledDeck[]) {
 		int ar[] = { 2, 2, 2, 2, 3, 3, 3, 3, 4, 4, 4, 4, 5, 5, 5, 5, 6, 6, 6, 6, 7, 7, 7, 7, 8, 8, 8, 8, 9, 9, 9, 9, 10,
@@ -91,7 +93,7 @@ public class Services {
 
 	/**
 	 * @author Faris Nassif
-	 * @param password
+	 * @param password Password to be sha'd
 	 * @return Returns the sha'd Password
 	 */
 	public static String shaPassword(String password) {

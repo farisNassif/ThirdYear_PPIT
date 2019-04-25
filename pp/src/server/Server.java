@@ -6,12 +6,11 @@ import java.io.ObjectOutputStream;
 import java.net.Socket;
 
 import services.Services;
-import services.Validation;
 import database.SQL;
 
 /**
  * @version 1.4
- * @author Faris Nassif & Cormac Raftery <br>
+ * @author Faris Nassif and Cormac Raftery <br>
  *         <br>
  *         The class <b>Server</b> extends <b>Thread</b> <br>
  *         Here the client will be able to access all functionality of the
@@ -51,9 +50,7 @@ public class Server extends Thread {
 
 	/**
 	 * Runs the client thread through the server, allowing them to navigate the
-	 * Program. The bulk of code contained within {@link server#run() run()} is
-	 * wrapped within other class methods such as {@link SQL#openConnection()} |
-	 * {@link Services#terminatingConnection(int clientID, String address)} .
+	 * Program. The bulk of code is contained and wrapped within other class methods
 	 */
 	public void run() {
 		try {
@@ -88,7 +85,7 @@ public class Server extends Thread {
 
 					// If theres already someone reigstered with the same name + password
 					if (SQL.queryForUser(playerName, playerPassword) == true) {
-						sendMessage("Sorry there is already a user with that name and password");
+						sendMessage("Sorry there is already a user with that name");
 					} else {
 						sendMessage(playerName + " you are now Registered and may Login!");
 						SQL.insertUser(playerName, playerPassword);
