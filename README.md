@@ -1,4 +1,4 @@
-# Java Server/Client Card-Game Library Project
+# Java Server/Client Card-Game-Library Project
 
 ## Overveiw
 This is a project for our 3rd Year Software Development module Professional Practice in IT, using the Java Programming Language to construct a Server/Client based card game Library that will allow Clients to connect to the Server, Register/Login to a Server side Database, play a selection of card games then save/load any previous gamestates from the database and continue off where they left.
