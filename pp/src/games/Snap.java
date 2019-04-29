@@ -123,7 +123,7 @@ public class Snap {
 
 	public char getInput() throws Exception {
 		currentcard=-1;
-		lastcard=-1;
+		lastcard=-2;
 		while(lastcard!= currentcard && currentcard !=0)
 		{
 			TimeUnit.SECONDS.sleep(1);
