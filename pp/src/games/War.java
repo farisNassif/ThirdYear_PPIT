@@ -187,37 +187,22 @@ public class War {
 				} catch (IOException e) {
 					System.out.println(e);
 				}
-				sendMessage(
-						"Would you like to: \nEnter 1. Complete the next round\nEnter 2. Save the game\nEnter 3. Output the game status\nEnter 4. Exit the game\n",
-						out);
-				input = (String) in.readObject();
-				roundOption = Integer.parseInt(input);
 				break;
 			case 3:
 				// Show Score
 				for (i = 1; i <= players; i++) {
 					sendMessage("Player " + i + " has " + playerPoints[i - 1] + " points", out);
 				}
-				sendMessage(
-						"Would you like to: \nEnter 1. Complete the next round\nEnter 2. Save the game\nEnter 3. Output the game status\nEnter 4. Exit the game\n",
-						out);
-				input = (String) in.readObject();
-				roundOption = Integer.parseInt(input);
 				break;
 			case 4:
 				// Exit
 				roundOption = 4;
 				break;
 			default:
-				sendMessage(
-						"Would you like to: \nEnter 1. Complete the next round\nEnter 2. Save the game\nEnter 3. Output the game status\nEnter 4. Exit the game\n",
-						out);
-				input = (String) in.readObject();
-				roundOption = Integer.parseInt(input);
 				break;
 			}
 
-			if (roundOption != 4) {
+			if (roundOption == 1) {
 				for (i = 1; i <= players; i++)// each player selects card
 				{
 					playRound(i, in, out);
