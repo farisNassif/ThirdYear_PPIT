@@ -6,6 +6,7 @@ import java.util.Random;
 import java.util.Timer;
 import java.util.TimerTask;
 import java.util.concurrent.ThreadLocalRandom;
+import java.util.concurrent.TimeUnit;
 
 /**
  * Runs the Game Snap
@@ -16,11 +17,11 @@ import java.util.concurrent.ThreadLocalRandom;
  */
 public class Snap {
 	private String str = "";
-	public static String input = "";
-	static ObjectOutputStream out;
-	static ObjectInputStream in;
-	//Timer timer;
+	public String input = "";
+	ObjectOutputStream out;
+	ObjectInputStream in;
 	int lastcard = 0;
+	int currentcard = -1;
 	double amtPlayers;
 	int[][] hands = new int[10][53];
 	int[] winnerCards = new int[10];
@@ -121,52 +122,30 @@ public class Snap {
 	}
 
 	public char getInput() throws Exception {
-		Timer timer = new Timer();
-		
-		TimerTask task = new TimerTask() {
-			public void run() {
-				if (str.equals("")) {
-					sendMessage(Integer.toString(hands[playernum][kcount]), out);
-					if (playernum != 0) {
-						lastcard = hands[playernum - 1][kcount];
-					} else if (playernum == 0 && kcount != 0) {
-						lastcard = hands[(int) amtPlayers - 1][kcount - 1];
-					}
-					cardCount++;
-					int currentcard = hands[playernum][kcount];
-					playernum++;
-					if (currentcard == 0) {
-						cardsPlayedCount = 55;
-						sendMessage("That's all the cards! enter any key to view final scores!", out);
-						try {
-							input = (String) in.readObject();
-						} catch (ClassNotFoundException e) {
-							// TODO Auto-generated catch block
-							e.printStackTrace();
-						} catch (IOException e) {
-							// TODO Auto-generated catch block
-							e.printStackTrace();
-						}
-						timer.cancel();
-					}
-					if (playernum >= amtPlayers) {
-						playernum = 0;
-						kcount++;
-					}
-					if (lastcard == currentcard) {
-						sendMessage("Enter!",out);
-						timer.cancel();
-					}
-				}
+		currentcard=-1;
+		lastcard=-1;
+		while(lastcard!= currentcard && currentcard !=0)
+		{
+			TimeUnit.SECONDS.sleep(1);
+			lastcard=currentcard;
+			sendMessage(Integer.toString(hands[playernum][kcount]), out);
+			currentcard=hands[playernum][kcount];
+			cardCount++;
+			int currentcard = hands[playernum][kcount];
+			playernum++;
+			if (currentcard == 0) {
+				cardsPlayedCount = 55;
+				sendMessage("That's all the cards!", out);
 			}
-		};
-		
-		timer.scheduleAtFixedRate(task, 1 * 1000, 1 * 1000);
-		System.out.println("162");
-		str = (String) in.readObject();
-		System.out.println("164");
+			if (playernum >= amtPlayers) {
+				playernum = 0;
+				kcount++;
+			}
+		}//while
+		sendMessage("Enter!", out);
+		input = (String) in.readObject();
+		str=input;
 		return str.charAt(0);
-
 	}
 
 	
